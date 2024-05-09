@@ -1,6 +1,6 @@
 # Script_Project
 
-# 2022184015 김해님, 202218
+# 2022184015 김해님, 2022180045 김민성
 
 https://www.data.go.kr/data/15013104/standard.do
 https://www.culture.go.kr/index.do
