@@ -1,17 +1,41 @@
 from tkinter import *
-class Page1:
+from load_data import *
+
+class Page2:
+
+    def search_by_et(self, string):
+        result = []
+        for elem in self.datas.iter('culName'):
+            if string in elem.text:
+                result.append(elem)
+        # 결과 출력
+        for elem in result:
+            print(ET.tostring(elem, encoding='unicode'))
+
+    def print_all_data(self, all_data_tree):
+        # 전체 데이터를 출력합니다.
+        for place_list in all_data_tree.findall('.//placeList'):
+            print("Place Data:")
+            for item in place_list:
+                print(f"{item.tag}: {item.text}")
+            print()
 
     def search(self):
         query = self.entry.get()  # 입력된 텍스트 가져오기
         # 여기에 검색을 수행하는 코드를 추가할 수 있습니다.
         print("검색어:", query)
+        self.search_by_et(query)
+
     def __init__(self, parent_frame):
+        self.datas = load_all_data_clubs()
+        self.print_all_data(self.datas)
+
         # 새로운 프레임 생성
         self.frame = Frame(parent_frame)
         self.frame.grid(row=0, column=0, padx=5, pady=10)
 
         # 이미지 추가
-        photo = PhotoImage(file="resources/r1.png")
+        photo = PhotoImage(file="resources/r2.png")
         resized_photo = photo.subsample(4, 4)
         label = Label(self.frame, image=resized_photo)
         label.photo = resized_photo

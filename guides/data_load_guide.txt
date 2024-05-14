@@ -28,4 +28,3 @@ https://www.data.go.kr/data/15013104/standard.do <- 전국문화축제표준데�
 
 url = 'http://api.data.go.kr/openapi/tn_pubr_public_cltur_fstvl_api'
 params ={'serviceKey' : 'ipA7GxlvIHVrsFJKg6yO/ihFWarSbbwT+hG6ejOQMISeS9BSPgbgsf08SbC9qwgBEjJlzzj/yYMNMbFhrUZ09A==', 'pageNo' : '1', 'numOfRows' : '100', 'type' : 'xml'}
-
