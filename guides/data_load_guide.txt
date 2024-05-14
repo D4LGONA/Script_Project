@@ -28,3 +28,20 @@ https://www.data.go.kr/data/15013104/standard.do <- 전국문화축제표준데�
 
 url = 'http://api.data.go.kr/openapi/tn_pubr_public_cltur_fstvl_api'
 params ={'serviceKey' : 'ipA7GxlvIHVrsFJKg6yO/ihFWarSbbwT+hG6ejOQMISeS9BSPgbgsf08SbC9qwgBEjJlzzj/yYMNMbFhrUZ09A==', 'pageNo' : '1', 'numOfRows' : '100', 'type' : 'xml'}
+
+Tag: placeList
+Child Elements:
+    Tag: seq
+    Text: 9258
+    Tag: culName
+    Text: 20세기소년
+    Tag: culGrpName
+    Text: 공연장
+    Tag: culTel
+    Text: 070-4242-6111
+    Tag: culHomeUrl
+    Text: http://choonza.net/summer20/
+    Tag: gpsX
+    Text: 127.0051067
+    Tag: gpsY
+    Text: 37.5604335

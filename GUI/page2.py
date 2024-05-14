@@ -3,19 +3,22 @@ from tkinter import ttk
 from load_data import *
 
 class Page2:
-    def print_element_info(self, element):
-        # 요소의 태그 이름 출력
-        print("Tag:", element.tag)
+    def print_element_info(self, element, parent_frame):
+        type_label = Label(parent_frame, text="Type: " + element.find('culGrpName').text)
+        type_label.pack(anchor='w')
 
-        # 요소의 속성 출력
-        if element.attrib:
-            print("Attributes:")
-            for key, value in element.attrib.items():
-                print(f"    {key}: {value}")
+        name_label = Label(parent_frame, text="Name: " + element.find('culName').text)
+        name_label.pack(anchor='w')
 
-        # 요소의 텍스트 출력
-        if element.text:
-            print("Text:", element.text)
+        tel_label = Label(parent_frame, text="Tel: " + element.find('culTel').text)
+        tel_label.pack(anchor='w')
+
+        url_label = Label(parent_frame, text="URL: " + element.find('culHomeUrl').text)
+        url_label.pack(anchor='w')
+
+        gps_label = Label(parent_frame,
+                          text="Location: " + element.find('gpsX').text + ", " + element.find('gpsY').text)
+        gps_label.pack(anchor='w')
 
 
     def search(self):
@@ -52,7 +55,7 @@ class Page2:
         res = self.search_by_et(clicked_text)
 
         for i in res:
-            self.print_element_info(i)
+            self.print_element_info(i, new_window)
 
         # 새로운 창을 child_windows 리스트에 추가
         self.child_windows.append(new_window)
