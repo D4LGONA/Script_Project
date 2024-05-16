@@ -1,8 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 from load_data import *
+import webbrowser
 
 class Page2:
+    def open_url(self, string):
+        webbrowser.open_new(string)
+
     def print_element_info(self, element, parent_frame):
         type_label = Label(parent_frame, text="Type: " + element.find('culGrpName').text)
         type_label.pack(anchor='w')
@@ -13,8 +17,10 @@ class Page2:
         tel_label = Label(parent_frame, text="Tel: " + element.find('culTel').text)
         tel_label.pack(anchor='w')
 
-        url_label = Label(parent_frame, text="URL: " + element.find('culHomeUrl').text)
+        url_label = Label(parent_frame, text="URL: " + element.find('culHomeUrl').text, cursor="hand2", wraplength=300, justify="left")
         url_label.pack(anchor='w')
+        url_label.bind("<Button-1>", lambda e: self.open_url(element.find('culHomeUrl').text))
+
 
         gps_label = Label(parent_frame,
                           text="Location: " + element.find('gpsX').text + ", " + element.find('gpsY').text)

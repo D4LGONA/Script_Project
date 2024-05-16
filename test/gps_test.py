@@ -1,31 +1,16 @@
+import os
 import requests
-from geopy.geocoders import Nominatim
+from dotenv import load_dotenv
 
+load_dotenv(verbose=True)
 
-def get_location(ip_address):
-    # Get location details based on IP address
-    geo_request_url = f'https://ipapi.co/{ip_address}/json/'
-    geo_request = requests.get(geo_request_url)
-    geo_data = geo_request.json()
+LOCATION_API_KEY = os.getenv('LOCATION_API_KEY')
 
-    # Extract latitude and longitude
-    latitude = geo_data['latitude']
-    longitude = geo_data['longitude']
+url = f'https://www.googleapis.com/geolocation/v1/geolocate?key={LOCATION_API_KEY}'
+data = {
+    'considerIp': True,
+}
 
-    return latitude, longitude
+result = requests.post(url, data)
 
-
-def main():
-    ip_address = input("Enter an IP address: ")  # 사용자로부터 IP 주소를 입력받음
-    latitude, longitude = get_location(ip_address)
-    print(f'Latitude: {latitude}, Longitude: {longitude}')
-
-    # Use geopy to get more detailed location information
-    geolocator = Nominatim(user_agent="geoapiExercises")
-    location = geolocator.reverse((latitude, longitude), language='en')
-
-    print(location.address)
-
-
-if __name__ == "__main__":
-    main()
+print(result.text)
