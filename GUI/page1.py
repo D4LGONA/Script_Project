@@ -1,5 +1,7 @@
 from tkinter import *
 class Page1:
+    # todo: 지도 띄우기.
+
 
     def search(self):
         query = self.entry.get()  # 입력된 텍스트 가져오기
