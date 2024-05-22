@@ -66,7 +66,7 @@ class Page2:
         # 새로운 창을 child_windows 리스트에 추가
         self.child_windows.append(new_window)
 
-    def __init__(self, parent_frame):
+    def __init__(self, parent_frame, x, y):
         self.datas = load_all_data_clubs()
 
         self.child_windows = []

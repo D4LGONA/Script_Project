@@ -2,7 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from GUI.page1 import Page1
 from GUI.page2 import Page2
-
+import functions
 
 class MainGui:
     def setUI(self):
@@ -27,10 +27,11 @@ class MainGui:
         self.window = Tk()
         self.window.title("스크립트언어")
         self.window.geometry("600x600")
+        self.x, self.y = functions.get_location()
 
         self.setUI()
-        self.page1_instance = Page1(self.pages[0])  # page1 인스턴스 생성 및 콜백 함수 전달
-        self.page2_instance = Page2(self.pages[1])
+        self.page1_instance = Page1(self.pages[0], self.x, self.y)  # page1 인스턴스 생성 및 콜백 함수 전달
+        self.page2_instance = Page2(self.pages[1], self.x, self.y)
 
         self.window.mainloop()
 
