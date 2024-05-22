@@ -1,11 +1,13 @@
 from tkinter import *
 from tkinter import ttk
+
+import functions
 from load_data import *
 import webbrowser
 from tkintermapview import TkinterMapView
 
-# todo: 위도경도로 주소받아오기
 # todo: tkintermap에 마커 추가하기
+# 진짜 핀만 하면 된다.. 진짜...
 
 class Page2:
     def reset_frame2(self):
@@ -44,23 +46,56 @@ class Page2:
         webbrowser.open_new(string)
 
     def print_element_info(self, element, parent_frame):
-        type_label = Label(parent_frame, text="Type: " + element.find('culGrpName').text)
-        type_label.pack(anchor='w')
+        Label_frame = Frame(parent_frame, bd=2, relief="solid")
+        Label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
 
-        name_label = Label(parent_frame, text="Name: " + element.find('culName').text)
-        name_label.pack(anchor='w')
+        map_frame = Frame(parent_frame, bd=2, relief="solid")
+        map_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
-        tel_label = Label(parent_frame, text="Tel: " + element.find('culTel').text)
-        tel_label.pack(anchor='w')
+        button_frame = Frame(parent_frame, bd=2, relief="solid")
+        button_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
-        url_label = Label(parent_frame, text="URL: " + element.find('culHomeUrl').text, cursor="hand2", wraplength=300, justify="left")
-        url_label.pack(anchor='w')
+        name_label = Label(Label_frame, text="Name: " + element.find('culName').text)
+        name_label.grid(row=0, sticky='w')
+
+        tel_label = Label(Label_frame, text="Tel: " + element.find('culTel').text)
+        tel_label.grid(row=1, sticky='w')
+
+        url_label = Label(Label_frame, text="URL: click!", cursor="hand2", wraplength=300, justify="left")
+        url_label.grid(row=2, sticky='w')
         url_label.bind("<Button-1>", lambda e: self.open_url(element.find('culHomeUrl').text))
 
-
-        gps_label = Label(parent_frame,
+        gps_label = Label(Label_frame,
                           text="Location: " + element.find('gpsX').text + ", " + element.find('gpsY').text)
-        gps_label.pack(anchor='w')
+        gps_label.grid(row=3, sticky='w')
+
+        gpsX = float(element.find('gpsX').text)
+        gpsY = float(element.find('gpsY').text)
+
+        # 소수점 4번째 자리까지 반올림
+        gpsX = round(gpsX, 4)
+        gpsY = round(gpsY, 4)
+
+        # 수정된 위도와 경도를 사용하여 주소 가져오기
+        addr = functions.get_address(gpsY, gpsX)
+        addr_label = Label(Label_frame, text="address: " + addr, wraplength=380)
+        addr_label.grid(row=4, sticky='w')
+
+        map_widget = TkinterMapView(map_frame, width=250, height=250, corner_radius=0)
+        map_widget.pack(fill="both", expand=True)
+
+        # 초기 지도 위치 설정 (위도, 경도 및 확대 수준)
+        map_widget.set_position(gpsY, gpsX)
+        map_widget.set_zoom(15)
+
+        b = Button(button_frame, text="북마크", command=self.search, width=8, height=2)
+        b.grid(row=0, column=0, padx=10, pady=10)
+        b = Button(button_frame, text="이메일", command=self.search, width=8, height=2)
+        b.grid(row=1, column=0, padx=10, pady=10)
+        b = Button(button_frame, text="파일", command=self.search, width=8, height=2)
+        b.grid(row=2, column=0, padx=10, pady=10)
+        b = Button(button_frame, text="텔레그램", command=self.search, width=8, height=2)
+        b.grid(row=3, column=0, padx=10, pady=10)
 
 
     def search(self):
@@ -115,8 +150,6 @@ class Page2:
         new_window = Toplevel(self.frame1)
         new_window.title(clicked_text)
         new_window.geometry("400x400")
-        label = Label(new_window, text=f"You clicked: {clicked_text}")
-        label.pack()
 
         res = self.search_by_et(clicked_text)
 
@@ -127,7 +160,6 @@ class Page2:
         self.child_windows.append(new_window)
 
     def on_image_click(self):
-        print("이미지 클릭!")
         self.reset_frame2()
 
     def __init__(self, parent_frame, x, y):
