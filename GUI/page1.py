@@ -20,6 +20,25 @@ class Page1:
         query = self.entry.get()  # 입력된 텍스트 가져오기
         # 여기에 검색을 수행하는 코드를 추가할 수 있습니다.
         print("검색어:", query)
+        # frame2의 모든 자식 위젯 제거
+        for widget in self.frame2.winfo_children():
+            widget.destroy()
+
+        # 리스트박스 추가
+        self.listbox = Listbox(self.frame2)
+        self.listbox.grid(row=0, column=0, sticky="nsew")
+
+        # 리스트박스에 아이템 추가
+        self.listbox.insert(END, "Item 1")
+        self.listbox.insert(END, "Item 2")
+        self.listbox.insert(END, "Item 3")
+
+        # 스크롤바 추가
+        scrollbar = Scrollbar(self.frame2, orient=VERTICAL)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        scrollbar.config(command=self.listbox.yview)
+
+        self.listbox.config(yscrollcommand=scrollbar.set)
 
     def __init__(self, parent_frame, x, y):
         self.x = x
