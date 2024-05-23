@@ -1,12 +1,9 @@
 from tkinter import *
 from tkinter import ttk
 
-import functions
 from load_data import *
 import webbrowser
-from tkintermapview import TkinterMapView
-import GUI.maingui
-import GUI.page3
+from GUI.child_page import *
 
 # todo: tkintermap에 마커 추가하기
 # 진짜 핀만 하면 된다.. 진짜...
@@ -17,8 +14,7 @@ class Page2:
         functions.bookmark_lists.append(element)
         if t != len(functions.bookmark_lists):
             self.parent.page3_instance.update_lb()
-            print("추가 완료!") # 추가 완료됐으니 업데이트 하라고 알려줘야 하는데
-            # 나한테 page3 객체가 없네
+            print("추가 완료!")
 
     def email(self):
         pass
@@ -32,123 +28,54 @@ class Page2:
     def reset_frame2(self):
         for widget in self.frame2.winfo_children():
             widget.destroy()
-        # 지도 추가
         self.map()
 
-        # 리스트박스 추가
         self.listbox = Listbox(self.frame2)
         self.listbox.grid(row=1, column=1, sticky="nsew", padx=20)
 
-        # 리스트박스에 아이템 추가
         self.listbox.insert(END, "Item 1")
         self.listbox.insert(END, "Item 2")
         self.listbox.insert(END, "Item 3")
 
-        # 라벨 추가
         self.label = Label(self.frame2, text="리스트박스 위에 라벨")
         self.label.grid(row=0, column=1, sticky="n", padx=20, pady=5)
 
     def map(self):
-        # 지도를 표시할 새로운 프레임 생성
         self.map_frame = Frame(self.frame2)
         self.map_frame.grid(row=1, column=0, sticky="nsew")
 
-        # 지도 위젯 생성 및 설정
         self.map_widget = TkinterMapView(self.map_frame, width=300, height=350, corner_radius=0)
         self.map_widget.pack(fill="both", expand=True, padx=40)
 
-        # 초기 지도 위치 설정 (위도, 경도 및 확대 수준)
         self.map_widget.set_position(self.x, self.y)
         self.map_widget.set_zoom(15)
 
     def open_url(self, string):
         webbrowser.open_new(string)
 
-    def print_element_info(self, element, parent_frame):
-        Label_frame = Frame(parent_frame, bd=2, relief="solid")
-        Label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
-
-        map_frame = Frame(parent_frame, bd=2, relief="solid")
-        map_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
-
-        button_frame = Frame(parent_frame, bd=2, relief="solid")
-        button_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
-
-        name_label = Label(Label_frame, text="Name: " + element.find('culName').text)
-        name_label.grid(row=0, sticky='w')
-
-        tel_label = Label(Label_frame, text="Tel: " + element.find('culTel').text)
-        tel_label.grid(row=1, sticky='w')
-
-        url_label = Label(Label_frame, text="URL: click!", cursor="hand2", wraplength=300, justify="left")
-        url_label.grid(row=2, sticky='w')
-        url_label.bind("<Button-1>", lambda e: self.open_url(element.find('culHomeUrl').text))
-
-        gps_label = Label(Label_frame,
-                          text="Location: " + element.find('gpsX').text + ", " + element.find('gpsY').text)
-        gps_label.grid(row=3, sticky='w')
-
-        gpsX = float(element.find('gpsX').text)
-        gpsY = float(element.find('gpsY').text)
-
-        # 소수점 4번째 자리까지 반올림
-        gpsX = round(gpsX, 4)
-        gpsY = round(gpsY, 4)
-
-        # 수정된 위도와 경도를 사용하여 주소 가져오기
-        addr = functions.get_address(gpsY, gpsX)
-        addr_label = Label(Label_frame, text="address: " + addr, wraplength=380)
-        addr_label.grid(row=4, sticky='w')
-
-        map_widget = TkinterMapView(map_frame, width=250, height=250, corner_radius=0)
-        map_widget.pack(fill="both", expand=True)
-
-        # 초기 지도 위치 설정 (위도, 경도 및 확대 수준)
-        map_widget.set_position(gpsY, gpsX)
-        map_widget.set_zoom(15)
-
-        b = Button(button_frame, text="북마크", command=lambda: self.bookmark(element), width=8, height=2)
-        b.grid(row=0, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="이메일", command=self.email, width=8, height=2)
-        b.grid(row=1, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="파일", command=self.file, width=8, height=2)
-        b.grid(row=2, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
-        b.grid(row=3, column=0, padx=10, pady=10)
-
-
     def search(self):
-        # 결과를 출력할 프레임 생성
         for widget in self.frame2.winfo_children():
             widget.destroy()
 
         result_frame = Frame(self.frame2)
         result_frame.grid(row=1, columnspan=3, padx=5, pady=10)
 
-        # 결과를 출력할 리스트박스 추가
         self.result_list = Listbox(result_frame, width=70, height=20)
         self.result_list.pack(side=LEFT, fill=BOTH, expand=True)
 
-        # 스크롤바 추가
         scrollbar = Scrollbar(result_frame, orient=VERTICAL)
         scrollbar.config(command=self.result_list.yview)
         scrollbar.pack(side=RIGHT, fill=Y)
 
-        # 리스트박스와 스크롤바 연결
         self.result_list.config(yscrollcommand=scrollbar.set)
-
-        # 리스트박스 더블클릭 이벤트 바인딩
         self.result_list.bind("<Double-1>", self.on_double_click)
 
         query = self.entry.get()
         datas = self.search_by_et(query)
-        # 결과 출력
-        self.result_list.delete(0, END)  # 기존 결과를 지우고 새로운 검색 결과를 표시합니다.
+        self.result_list.delete(0, END)
         for element in datas:
-            # 각 요소에서 공연장 이름을 가져와 리스트박스에 추가합니다.
             cul_name = element.find('culName').text
             self.result_list.insert(END, cul_name)
-
 
     def search_by_et(self, string):
         result = []
@@ -161,21 +88,10 @@ class Page2:
     def on_double_click(self, event):
         index = self.result_list.curselection()[0]
         clicked_text = self.result_list.get(index)
-        print("Clicked:", clicked_text)
-        self.open_new_window(clicked_text)
-
-    def open_new_window(self, clicked_text):
-        new_window = Toplevel(self.frame1)
-        new_window.title(clicked_text)
-        new_window.geometry("400x400")
-
         res = self.search_by_et(clicked_text)
 
-        for i in res:
-            self.print_element_info(i, new_window)
-
-        # 새로운 창을 child_windows 리스트에 추가
-        self.child_windows.append(new_window)
+        for element in res:
+            DetailWindow(self.frame1, clicked_text, element, self.bookmark)
 
     def on_image_click(self):
         self.reset_frame2()
@@ -186,33 +102,26 @@ class Page2:
         self.y = y
         self.datas = load_all_data_clubs()
 
-        self.child_windows = []
-
-        # 새로운 프레임 생성
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)
 
-        # 이미지 추가
         photo = PhotoImage(file="resources/r2.png")
         resized_photo = photo.subsample(4, 4)
         button = Button(self.frame1, image=resized_photo, command=self.on_image_click, bd=0, highlightthickness=0)
-        button.photo = resized_photo  # 참조 유지를 위해 필요함
+        button.photo = resized_photo
         button.grid(row=0, column=0, sticky=W, padx=5)
 
+        self.entry = Entry(self.frame1, width=50)
+        self.entry.grid(row=0, column=1, padx=5, pady=10)
 
-        # Entry 위젯 추가
-        self.entry = Entry(self.frame1, width=50)  # 프레임에 추가
-        self.entry.grid(row=0, column=1, padx=5, pady=10)  # 첫 번째 열에 배치
+        self.search_button = Button(self.frame1, text="검색", command=self.search, width=8, height=2)
+        self.search_button.grid(row=0, column=2, padx=5, pady=10)
 
-        # 검색 버튼 추가
-        self.search_button = Button(self.frame1, text="검색", command=self.search, width=8, height=2)  # 프레임에 추가
-        self.search_button.grid(row=0, column=2, padx=5, pady=10)  # 두 번째 열에 배치
-
-        # 프레임2: 지도, 리스트박스
         self.frame2 = Frame(parent_frame)
         self.frame2.grid(row=1, column=0, padx=5, pady=10)
 
         self.reset_frame2()
+
 
 
 

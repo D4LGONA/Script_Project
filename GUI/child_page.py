@@ -1,58 +1,75 @@
 from tkinter import *
-from functions import *
+import functions
+from tkintermapview import TkinterMapView
+import webbrowser
 
 # 아예 chilepage를 따로떼서 북마크 눌렀을때 저기 추가하고
-class child_page:
-    def print_element_info(self, element, parent_frame):
-        Label_frame = Frame(parent_frame, bd=2, relief="solid")
-        Label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
+class DetailWindow:
+    def __init__(self, parent, title, element, bookmark_callback):
+        self.window = Toplevel(parent)
+        self.window.title(title)
+        self.window.geometry("400x400")
 
-        map_frame = Frame(parent_frame, bd=2, relief="solid")
+        self.element = element
+        self.bookmark_callback = bookmark_callback
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        # 상세 정보를 출력할 프레임 생성
+        self.label_frame = Frame(self.window, bd=2, relief="solid")
+        self.label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
+
+        map_frame = Frame(self.window, bd=2, relief="solid")
         map_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
-        button_frame = Frame(parent_frame, bd=2, relief="solid")
+        button_frame = Frame(self.window, bd=2, relief="solid")
         button_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
-        name_label = Label(Label_frame, text="Name: " + element.find('culName').text)
+        name_label = Label(self.label_frame, text="Name: " + self.element.find('culName').text)
         name_label.grid(row=0, sticky='w')
 
-        tel_label = Label(Label_frame, text="Tel: " + element.find('culTel').text)
+        tel_label = Label(self.label_frame, text="Tel: " + self.element.find('culTel').text)
         tel_label.grid(row=1, sticky='w')
 
-        url_label = Label(Label_frame, text="URL: click!", cursor="hand2", wraplength=300, justify="left")
+        url_label = Label(self.label_frame, text="URL: click!", cursor="hand2", wraplength=300, justify="left")
         url_label.grid(row=2, sticky='w')
-        url_label.bind("<Button-1>", lambda e: self.open_url(element.find('culHomeUrl').text))
+        url_label.bind("<Button-1>", lambda e: webbrowser.open_new(self.element.find('culHomeUrl').text))
 
-        gps_label = Label(Label_frame,
-                          text="Location: " + element.find('gpsX').text + ", " + element.find('gpsY').text)
+        gps_label = Label(self.label_frame,
+                          text="Location: " + self.element.find('gpsX').text + ", " + self.element.find('gpsY').text)
         gps_label.grid(row=3, sticky='w')
 
-        gpsX = float(element.find('gpsX').text)
-        gpsY = float(element.find('gpsY').text)
+        gpsX = float(self.element.find('gpsX').text)
+        gpsY = float(self.element.find('gpsY').text)
 
-        # 소수점 4번째 자리까지 반올림
         gpsX = round(gpsX, 4)
         gpsY = round(gpsY, 4)
 
-        # 수정된 위도와 경도를 사용하여 주소 가져오기
         addr = functions.get_address(gpsY, gpsX)
-        addr_label = Label(Label_frame, text="address: " + addr, wraplength=380)
+        addr_label = Label(self.label_frame, text="address: " + addr, wraplength=380)
         addr_label.grid(row=4, sticky='w')
 
         map_widget = TkinterMapView(map_frame, width=250, height=250, corner_radius=0)
         map_widget.pack(fill="both", expand=True)
 
-        # 초기 지도 위치 설정 (위도, 경도 및 확대 수준)
         map_widget.set_position(gpsY, gpsX)
         map_widget.set_zoom(15)
 
-        b = Button(button_frame, text="북마크", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="북마크", command=lambda: self.bookmark_callback(self.element), width=8, height=2)
         b.grid(row=0, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="이메일", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="이메일", command=self.email, width=8, height=2)
         b.grid(row=1, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="파일", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="파일", command=self.file, width=8, height=2)
         b.grid(row=2, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="텔레그램", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
         b.grid(row=3, column=0, padx=10, pady=10)
-    def __init__(self):
+
+    def email(self):
+        pass
+
+    def file(self):
+        pass
+
+    def tele(self):
         pass
