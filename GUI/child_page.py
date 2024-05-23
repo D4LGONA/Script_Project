@@ -5,13 +5,13 @@ import webbrowser
 
 # 아예 chilepage를 따로떼서 북마크 눌렀을때 저기 추가하고
 class DetailWindow:
-    def __init__(self, parent, title, element, bookmark_callback):
-        self.window = Toplevel(parent)
+    def __init__(self, parentFrame, parent, title, element):
+        self.topParent = parent
+        self.window = Toplevel(parentFrame)
         self.window.title(title)
         self.window.geometry("400x400")
 
         self.element = element
-        self.bookmark_callback = bookmark_callback
 
         self.setup_ui()
 
@@ -56,7 +56,7 @@ class DetailWindow:
         map_widget.set_position(gpsY, gpsX)
         map_widget.set_zoom(15)
 
-        b = Button(button_frame, text="북마크", command=lambda: self.bookmark_callback(self.element), width=8, height=2)
+        b = Button(button_frame, text="북마크", command=lambda: self.bookmark(self.element), width=8, height=2)
         b.grid(row=0, column=0, padx=10, pady=10)
         b = Button(button_frame, text="이메일", command=self.email, width=8, height=2)
         b.grid(row=1, column=0, padx=10, pady=10)
@@ -73,3 +73,10 @@ class DetailWindow:
 
     def tele(self):
         pass
+
+    def bookmark(self, element):
+        t = len(functions.bookmark_lists)
+        functions.bookmark_lists.append(element)
+        if t != len(functions.bookmark_lists):
+            self.topParent.page3_instance.update_lb()
+            print("추가 완료!")

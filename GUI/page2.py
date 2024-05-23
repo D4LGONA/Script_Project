@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 from load_data import *
-import webbrowser
 from GUI.child_page import *
 
 # todo: tkintermap에 마커 추가하기
@@ -91,7 +90,7 @@ class Page2:
         res = self.search_by_et(clicked_text)
 
         for element in res:
-            DetailWindow(self.frame1, clicked_text, element, self.bookmark)
+            DetailWindow(self.frame1, self.parent, clicked_text, element)
 
     def on_image_click(self):
         self.reset_frame2()
