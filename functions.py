@@ -1,6 +1,8 @@
 # AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY
 import requests
 
+bookmark_lists = []
+
 def get_location(): # 현재 위치 가져오는 함수
     api_key = 'AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY'
     url = f'https://www.googleapis.com/geolocation/v1/geolocate?key={api_key}'

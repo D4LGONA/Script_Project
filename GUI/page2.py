@@ -5,11 +5,30 @@ import functions
 from load_data import *
 import webbrowser
 from tkintermapview import TkinterMapView
+import GUI.maingui
+import GUI.page3
 
 # todo: tkintermap에 마커 추가하기
 # 진짜 핀만 하면 된다.. 진짜...
 
 class Page2:
+    def bookmark(self, element):
+        t = len(functions.bookmark_lists)
+        functions.bookmark_lists.append(element)
+        if t != len(functions.bookmark_lists):
+            self.parent.page3_instance.update_lb()
+            print("추가 완료!") # 추가 완료됐으니 업데이트 하라고 알려줘야 하는데
+            # 나한테 page3 객체가 없네
+
+    def email(self):
+        pass
+
+    def file(self):
+        pass
+
+    def tele(self):
+        pass
+
     def reset_frame2(self):
         for widget in self.frame2.winfo_children():
             widget.destroy()
@@ -88,13 +107,13 @@ class Page2:
         map_widget.set_position(gpsY, gpsX)
         map_widget.set_zoom(15)
 
-        b = Button(button_frame, text="북마크", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="북마크", command=lambda: self.bookmark(element), width=8, height=2)
         b.grid(row=0, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="이메일", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="이메일", command=self.email, width=8, height=2)
         b.grid(row=1, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="파일", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="파일", command=self.file, width=8, height=2)
         b.grid(row=2, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="텔레그램", command=self.search, width=8, height=2)
+        b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
         b.grid(row=3, column=0, padx=10, pady=10)
 
 
@@ -131,7 +150,6 @@ class Page2:
             self.result_list.insert(END, cul_name)
 
 
-
     def search_by_et(self, string):
         result = []
         for place_list in self.datas.iter('placeList'):
@@ -162,7 +180,8 @@ class Page2:
     def on_image_click(self):
         self.reset_frame2()
 
-    def __init__(self, parent_frame, x, y):
+    def __init__(self, parent_frame, x, y, parent):
+        self.parent = parent
         self.x = x
         self.y = y
         self.datas = load_all_data_clubs()

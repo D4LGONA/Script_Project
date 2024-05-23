@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from GUI.page1 import Page1
 from GUI.page2 import Page2
+from GUI.page3 import Page3
 import functions
 
 class MainGui:
@@ -19,9 +20,9 @@ class MainGui:
         self.notebook.add(page2, text="공연장 정보 검색")
         self.pages.append(page2)
 
-
-    def load_page_datas(self):
-        pass
+        page3 = Frame(self.notebook)
+        self.notebook.add(page3, text="북마크")
+        self.pages.append(page3)
 
     def __init__(self):
         self.window = Tk()
@@ -31,7 +32,8 @@ class MainGui:
 
         self.setUI()
         self.page1_instance = Page1(self.pages[0], self.x, self.y)  # page1 인스턴스 생성 및 콜백 함수 전달
-        self.page2_instance = Page2(self.pages[1], self.x, self.y)
+        self.page2_instance = Page2(self.pages[1], self.x, self.y, self)
+        self.page3_instance = Page3(self.pages[2])
 
         self.window.mainloop()
 
