@@ -1,0 +1,11 @@
+# main.py
+from naver_map_crawler import search_naver_map
+
+def main():
+    keyword = input("Enter the keyword to search on Naver Map: ")
+    results = search_naver_map(keyword)
+    for result in results:
+        print(f"Name: {result['name']}, Address: {result['address']}")
+
+if __name__ == "__main__":
+    main()
