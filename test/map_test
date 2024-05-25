@@ -1,9 +1,9 @@
 # main.py
-from naver_map_crawler import search_naver_map
+from naver_map_crawler import search_kakao_map
 
 def main():
     keyword = input("Enter the keyword to search on Naver Map: ")
-    results = search_naver_map(keyword)
+    results = search_kakao_map(keyword)
     for result in results:
         print(f"Name: {result['name']}, Address: {result['address']}")
 

@@ -1,5 +1,4 @@
 # naver_map_crawler.py
-
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.keys import Keys
@@ -8,35 +7,34 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-def search_naver_map(keyword):
-    # ChromeDriver 경로 설정
-    driver_path = ''  # Windows
-    # driver_path = '/path/to/chromedriver'  # macOS/Linux
+def search_kakao_map(keyword):
+    # ChromeDriver 경로 설정 (실제 경로로 수정)
+    driver_path = r"C:\Users\YS-PC\Desktop\chromedriver_win32-syms\chromedriver.exe.pdb"# 예: ChromeDriver가 바탕화면에 있다면
     service = Service(driver_path)
     driver = webdriver.Chrome(service=service)
 
     try:
-        # 네이버 지도 접속
-        driver.get('https://map.naver.com/')
+        # 카카오 지도 접속
+        driver.get('https://map.kakao.com/')
 
         # 검색창 찾기 및 검색어 입력
         search_box = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, 'input#search-input'))
+            EC.presence_of_element_located((By.CSS_SELECTOR, '098672093005c37514a6aa16b650d0e2'))
         )
         search_box.send_keys(keyword)
         search_box.send_keys(Keys.RETURN)
 
         # 검색 결과 로드 대기
-        time.sleep(3)
+        time.sleep(5)  # 페이지 로딩을 위해 충분한 대기 시간 필요
 
         # 검색 결과 크롤링
-        places = driver.find_elements(By.CSS_SELECTOR, 'li._1EKsQ')
+        places = driver.find_elements(By.CSS_SELECTOR, 'ul.placelist > li.PlaceItem')
 
         results = []
         for place in places:
             try:
-                name = place.find_element(By.CSS_SELECTOR, 'div._3LMxZ').text
-                address = place.find_element(By.CSS_SELECTOR, 'div._3ZU00').text
+                name = place.find_element(By.CSS_SELECTOR, 'a.link_name').text
+                address = place.find_element(By.CSS_SELECTOR, 'p.lot_number').text
                 results.append({'name': name, 'address': address})
             except Exception as e:
                 print(f"Error: {e}")
@@ -49,7 +47,7 @@ def search_naver_map(keyword):
         driver.quit()
 
 if __name__ == "__main__":
-    keyword = input("Enter the keyword to search on Naver Map: ")
-    results = search_naver_map(keyword)
+    keyword = input("098672093005c37514a6aa16b650d0e2")
+    results = search_kakao_map(keyword)
     for result in results:
         print(f"Name: {result['name']}, Address: {result['address']}")
