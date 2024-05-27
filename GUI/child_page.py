@@ -2,6 +2,7 @@ from tkinter import *
 import functions
 from tkintermapview import TkinterMapView
 import webbrowser
+from tkinter import messagebox
 
 # 아예 chilepage를 따로떼서 북마크 눌렀을때 저기 추가하고
 class DetailWindow:
@@ -60,7 +61,7 @@ class DetailWindow:
         b.grid(row=0, column=0, padx=10, pady=10)
         b = Button(button_frame, text="이메일", command=self.email, width=8, height=2)
         b.grid(row=1, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="파일", command=self.file, width=8, height=2)
+        b = Button(button_frame, text="파일", command=lambda: self.file(self.element), width=8, height=2)
         b.grid(row=2, column=0, padx=10, pady=10)
         b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
         b.grid(row=3, column=0, padx=10, pady=10)
@@ -68,8 +69,28 @@ class DetailWindow:
     def email(self):
         pass
 
-    def file(self):
-        pass
+    def file(self, element):
+        cul_name = element.find('culName').text
+        file_path = "datas/" + cul_name + ".txt"
+
+        # 파일에 저장할 내용 작성
+        file_content = ""
+        cul_tel = element.find('culTel').text
+        cul_home_url = element.find('culHomeUrl').text
+        gps_x = element.find('gpsX').text
+        gps_y = element.find('gpsY').text
+        address = functions.get_address(float(gps_y), float(gps_x))
+        file_content += f"Cultural Name: {cul_name}\n"
+        file_content += f"Tel: {cul_tel}\n"
+        file_content += f"URL: {cul_home_url}\n"
+        file_content += f"Location: {gps_x}, {gps_y}\n"
+        file_content += f"Address: {address}\n"
+
+        # 파일에 내용 저장
+        with open(file_path, 'w', encoding="utf-8") as file:
+            file.write(file_content)
+
+        messagebox.showinfo("저장", file_path + "에 저장됨!")
 
     def tele(self):
         pass

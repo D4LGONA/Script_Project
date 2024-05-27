@@ -1,25 +1,14 @@
 from tkinter import *
 from tkinter import ttk
-
 from load_data import *
 from GUI.child_page import *
+from tkinter import messagebox
 
 # todo: tkintermap에 마커 추가하기
 # 진짜 핀만 하면 된다.. 진짜...
 
 class Page2:
-    def bookmark(self, element):
-        t = len(functions.bookmark_lists)
-        functions.bookmark_lists.append(element)
-        if t != len(functions.bookmark_lists):
-            self.parent.page3_instance.update_lb()
-            print("추가 완료!")
 
-    def email(self):
-        pass
-
-    def file(self):
-        pass
 
     def tele(self):
         pass
@@ -36,7 +25,7 @@ class Page2:
         self.listbox.insert(END, "Item 2")
         self.listbox.insert(END, "Item 3")
 
-        self.label = Label(self.frame2, text="리스트박스 위에 라벨")
+        self.label = Label(self.frame2, text="뭘 넣으면 좋을까")
         self.label.grid(row=0, column=1, sticky="n", padx=20, pady=5)
 
     def map(self):

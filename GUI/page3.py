@@ -1,5 +1,6 @@
 from tkinter import *
 import functions
+import xml.etree.ElementTree as ET
 
 class Page3:
     def remove(self):
@@ -15,6 +16,35 @@ class Page3:
             self.update_lb()
         else:
             print("No item selected.")  # 선택된 항목이 없을 경우에 대한 처리
+
+    def load(self):
+        file_path = "datas/bookmark_data.txt"
+
+        # bookmark_lists에 데이터 저장
+        functions.bookmark_lists = []
+        temp_data = {}
+        with open(file_path, 'r', encoding="utf-8") as file:
+            for line in file:
+                if line.strip():  # 빈 줄이 아닌 경우에만 처리
+                    key, value = line.strip().split(": ")
+                    temp_data[key.strip()] = value.strip()
+                else:
+                    functions.bookmark_lists.append(temp_data)
+                    temp_data = {}
+
+        # bookmark_lists에 저장된 데이터를 ElementTree 형식으로 변환하여 저장
+        root = ET.Element("bookmarks")
+        for data in functions.bookmark_lists:
+            bookmark = ET.SubElement(root, "bookmark")
+            for key, value in data.items():
+                ET.SubElement(bookmark, key).text = value
+
+        functions.bookmark_lists = []
+        for d in root:
+            functions.bookmark_lists.append(d)
+
+        print("Bookmark data loaded from:", file_path)
+
 
     def file(self):
         # 파일 경로 설정
@@ -93,6 +123,8 @@ class Page3:
         button_frame.grid(row=0, column=2, padx=5, pady=10)  # 버튼 프레임을 그리드 셀에 배치
 
         # 버튼 추가
+        button0 = Button(button_frame, text="로드", command=self.load)
+        button0.pack(pady=5)
         button1 = Button(button_frame, text="파일", command=self.file)
         button1.pack(pady=5)
         button2 = Button(button_frame, text="삭제", command=self.remove)
