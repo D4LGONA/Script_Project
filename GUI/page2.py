@@ -3,8 +3,8 @@ from tkinter import ttk
 from load_data import *
 from GUI.child_page import *
 from tkinter import messagebox
+from functions import *
 
-# todo: tkintermap에 마커 추가하기
 
 class Page2:
 
@@ -15,13 +15,14 @@ class Page2:
 
         self.listbox = Listbox(self.frame2)
         self.listbox.grid(row=1, column=1, sticky="nsew", padx=20)
+        self.listbox.bind("<Double-1>", self.on_double_click2)
 
-        self.listbox.insert(END, "Item 1")
-        self.listbox.insert(END, "Item 2")
-        self.listbox.insert(END, "Item 3")
+        for e in self.lb_datas.iter('placeList'):
+            self.listbox.insert(END, e.find('culName').text)
 
-        self.label = Label(self.frame2, text="뭘 넣으면 좋을까")
+        self.label = Label(self.frame2, text="근처에 있는 문화공간들!")
         self.label.grid(row=0, column=1, sticky="n", padx=20, pady=5)
+
 
     def map(self):
         self.map_frame = Frame(self.frame2)
@@ -29,6 +30,14 @@ class Page2:
 
         self.map_widget = TkinterMapView(self.map_frame, width=300, height=350, corner_radius=0)
         self.map_widget.pack(fill="both", expand=True, padx=40)
+
+        for e in self.datas.iter('placeList'):
+            gpsX = float(e.find('gpsX').text)
+            gpsY = float(e.find('gpsY').text)
+            try:
+                self.map_widget.set_marker(gpsY, gpsX, e.find('culName').text)
+            except:
+                pass
 
         self.map_widget.set_position(self.x, self.y)
         self.map_widget.set_zoom(15)
@@ -74,7 +83,15 @@ class Page2:
         res = self.search_by_et(clicked_text)
 
         for element in res:
-            DetailWindow(self.frame1, self.parent, clicked_text, element)
+            DetailWindow_place(self.frame1, self.parent, clicked_text, element)
+
+    def on_double_click2(self, event):
+        index = self.listbox.curselection()[0]
+        clicked_text = self.listbox.get(index)
+        res = self.search_by_et(clicked_text)
+
+        for element in res:
+            DetailWindow_place(self.frame1, self.parent, clicked_text, element)
 
     def on_image_click(self):
         self.reset_frame2()
@@ -84,6 +101,14 @@ class Page2:
         self.x = x
         self.y = y
         self.datas = load_all_data_clubs()
+        all_data_element = ET.Element('all_data')
+        for e in self.datas.iter('placeList'):
+            if calculate_distance(float(e.find('gpsY').text), float(e.find('gpsX').text), self.x, self.y) < 10: # todo: 거리를 어떻게할까
+                all_data_element.append(e)
+
+        self.lb_datas = ET.ElementTree(all_data_element)
+
+
 
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)

@@ -1,5 +1,6 @@
 # AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY
 import requests
+from math import *
 
 bookmark_lists = []
 
@@ -37,3 +38,25 @@ def get_address(latitude, longitude):
         return address
     else:
         return "주소를 찾을 수 없습니다."
+
+
+def calculate_distance(lat1, lon1, lat2, lon2):
+    # 지구의 반지름 (단위: km)
+    R = 6371.0
+
+    # 위도와 경도를 라디안으로 변환
+    lat1 = radians(lat1)
+    lon1 = radians(lon1)
+    lat2 = radians(lat2)
+    lon2 = radians(lon2)
+
+    # 위도와 경도의 차이 계산
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    # Haversine 공식을 사용하여 두 지점 간의 거리 계산
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+    return distance

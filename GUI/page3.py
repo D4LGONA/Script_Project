@@ -47,6 +47,7 @@ class Page3:
     def file(self):
         # 파일 경로 설정
         file_path = "datas/bookmark_data.txt"
+        file_path2 = "datas/bookmark_data.xml"
 
         # 파일에 저장할 내용 작성
         file_content = ""
@@ -63,6 +64,8 @@ class Page3:
             file_content += f"Location: {gps_x}, {gps_y}\n"
             file_content += f"Address: {address}\n"
             file_content += "\n"  # 요소 사이에 빈 줄 추가
+            with open(file_path, 'wb') as xml_file:
+                element.write(xml_file, encoding='utf-8', xml_declaration=True)
 
         # 파일에 내용 저장
         with open(file_path, 'w', encoding="utf-8") as file:

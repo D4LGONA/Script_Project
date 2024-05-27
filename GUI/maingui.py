@@ -13,11 +13,11 @@ class MainGui:
 
         self.pages = []
         page1 = Frame(self.notebook)
-        self.notebook.add(page1, text="축제 정보 검색")
+        self.notebook.add(page1, text="문화공연 정보 검색")
         self.pages.append(page1)
 
         page2 = Frame(self.notebook)
-        self.notebook.add(page2, text="공연장 정보 검색")
+        self.notebook.add(page2, text="문화공간 정보 검색")
         self.pages.append(page2)
 
         page3 = Frame(self.notebook)
@@ -31,7 +31,7 @@ class MainGui:
         self.x, self.y = functions.get_location()
 
         self.setUI()
-        self.page1_instance = Page1(self.pages[0], self.x, self.y)  # page1 인스턴스 생성 및 콜백 함수 전달
+        self.page1_instance = Page1(self.pages[0], self.x, self.y, self)
         self.page2_instance = Page2(self.pages[1], self.x, self.y, self)
         self.page3_instance = Page3(self.pages[2])
 

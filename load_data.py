@@ -2,6 +2,7 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 import os
+import time
 
 def load_all_data_clubs():
     # http://www.culture.go.kr/openapi/rest/cultureartspaces/performingplace?serviceKey=ipA7GxlvIHVrsFJKg6yO%2FihFWarSbbwT%2BhG6ejOQMISeS9BSPgbgsf08SbC9qwgBEjJlzzj%2FyYMNMbFhrUZ09A%3D%3D&cPage=10&rows=1&RequestTime=20100810:23003422
@@ -136,5 +137,49 @@ def load_data_performs():
     with open(file_path, 'wb') as xml_file:
         all_data_tree.write(xml_file, encoding='utf-8', xml_declaration=True)
     print("새로운 데이터로 XML 파일을 저장했습니다.")
+
+
+    return all_data_tree
+
+def load_by_period():
+    url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/period'
+    # 현재 시간을 타임스탬프로 가져오기
+    current_timestamp = time.time()
+
+    # 타임스탬프를 날짜로 변환하기
+    current_date = time.strftime("%Y%m%d", time.localtime(current_timestamp))
+
+    # params 설정
+    params = {
+        'serviceKey': 'ipA7GxlvIHVrsFJKg6yO/ihFWarSbbwT+hG6ejOQMISeS9BSPgbgsf08SbC9qwgBEjJlzzj/yYMNMbFhrUZ09A==',
+        'sortStdr': '2',  # 출력정렬방식 - 1:등록일, 2:공연명, 3:지역
+        'rows': '1000',
+        'from': current_date,
+        'to': current_date  # 현재 날짜로 설정
+    }
+
+    all_data_element = ET.Element('all_data')
+
+    # 페이지별로 데이터를 요청하고 받아옵니다.
+    page = 1
+    while True:
+        params['cPage'] = str(page)
+        response = requests.get(url, params=params)
+        response.encoding = 'utf-8'
+        root = ET.fromstring(response.text)
+
+        # placeList 요소를 찾아 데이터를 추출하고 all_data_element에 추가합니다.
+        for place_list in root.findall('.//perforList'):
+            all_data_element.append(place_list)
+
+        # 다음 페이지가 있는지 확인합니다.
+        total_cnt = int(root.findtext('.//totalCount'))
+        if total_cnt == len(all_data_element.findall('.//perforList')):
+            break
+        else:
+            page += 1
+
+    # 모든 데이터를 포함하는 ElementTree 객체 생성
+    all_data_tree = ET.ElementTree(all_data_element)
 
     return all_data_tree
