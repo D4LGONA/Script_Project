@@ -14,10 +14,8 @@ class Page3:
 
             # 리스트박스 업데이트
             self.update_lb()
-        else:
-            print("No item selected.")  # 선택된 항목이 없을 경우에 대한 처리
 
-    def load(self):
+    def load(self): # todo
         file_path = "datas/bookmark_data.txt"
 
         # bookmark_lists에 데이터 저장

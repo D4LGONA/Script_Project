@@ -13,7 +13,6 @@ class DetailWindow:
         self.window.geometry("400x400")
 
         self.element = element
-
         self.setup_ui()
 
     def setup_ui(self):
@@ -92,7 +91,7 @@ class DetailWindow:
 
         messagebox.showinfo("저장", file_path + "에 저장됨!")
 
-    def tele(self):
+    def tele(self): # todo
         pass
 
     def bookmark(self, element):
@@ -100,4 +99,4 @@ class DetailWindow:
         functions.bookmark_lists.append(element)
         if t != len(functions.bookmark_lists):
             self.topParent.page3_instance.update_lb()
-            print("추가 완료!")
+            messagebox.showinfo("북마크", element.find('culName').text+" 저장 완료!")

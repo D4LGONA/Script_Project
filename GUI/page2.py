@@ -5,13 +5,8 @@ from GUI.child_page import *
 from tkinter import messagebox
 
 # todo: tkintermap에 마커 추가하기
-# 진짜 핀만 하면 된다.. 진짜...
 
 class Page2:
-
-
-    def tele(self):
-        pass
 
     def reset_frame2(self):
         for widget in self.frame2.winfo_children():
@@ -109,7 +104,3 @@ class Page2:
         self.frame2.grid(row=1, column=0, padx=5, pady=10)
 
         self.reset_frame2()
-
-
-
-

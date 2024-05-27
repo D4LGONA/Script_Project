@@ -1,8 +1,49 @@
 from tkinter import *
 from tkintermapview import TkinterMapView
 import functions
+from load_data import *
 
 class Page1:
+    def on_double_click(self, event):
+        index = self.result_list.curselection()[0]
+        clicked_text = self.result_list.get(index)
+        res = self.search_by_et(clicked_text)
+
+        for element in res:
+            DetailWindow(self.frame1, self.parent, clicked_text, element)
+
+    def search(self):
+        for widget in self.frame2.winfo_children():
+            widget.destroy()
+
+        result_frame = Frame(self.frame2)
+        result_frame.grid(row=1, columnspan=3, padx=5, pady=10)
+
+        self.result_list = Listbox(result_frame, width=70, height=20)
+        self.result_list.pack(side=LEFT, fill=BOTH, expand=True)
+
+        scrollbar = Scrollbar(result_frame, orient=VERTICAL)
+        scrollbar.config(command=self.result_list.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+
+        self.result_list.config(yscrollcommand=scrollbar.set)
+        self.result_list.bind("<Double-1>", self.on_double_click)
+
+        query = self.entry.get()
+        datas = self.search_by_et(query)
+        self.result_list.delete(0, END)
+        for element in datas:
+            cul_name = element.find('title').text
+            self.result_list.insert(END, cul_name)
+
+    def search_by_et(self, string):
+        result = []
+        for place_list in self.datas.iter('perforList'):
+            cul_name = place_list.find('title').text
+            if string in cul_name:
+                result.append(place_list)
+        return result
+
     def map(self):
         # 지도를 표시할 새로운 프레임 생성
         self.map_frame = Frame(self.frame2)
@@ -16,33 +57,41 @@ class Page1:
         self.map_widget.set_position(self.x, self.y)
         self.map_widget.set_zoom(15)
 
-    def search(self):
-        query = self.entry.get()  # 입력된 텍스트 가져오기
-        # 여기에 검색을 수행하는 코드를 추가할 수 있습니다.
-        print("검색어:", query)
-        # frame2의 모든 자식 위젯 제거
         for widget in self.frame2.winfo_children():
             widget.destroy()
 
-        # 리스트박스 추가
-        self.listbox = Listbox(self.frame2)
-        self.listbox.grid(row=0, column=0, sticky="nsew")
+        result_frame = Frame(self.frame2)
+        result_frame.grid(row=1, columnspan=3, padx=5, pady=10)
 
-        # 리스트박스에 아이템 추가
-        self.listbox.insert(END, "Item 1")
-        self.listbox.insert(END, "Item 2")
-        self.listbox.insert(END, "Item 3")
+        self.result_list = Listbox(result_frame, width=70, height=20)
+        self.result_list.pack(side=LEFT, fill=BOTH, expand=True)
 
-        # 스크롤바 추가
-        scrollbar = Scrollbar(self.frame2, orient=VERTICAL)
-        scrollbar.grid(row=0, column=1, sticky="ns")
-        scrollbar.config(command=self.listbox.yview)
+        scrollbar = Scrollbar(result_frame, orient=VERTICAL)
+        scrollbar.config(command=self.result_list.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
 
-        self.listbox.config(yscrollcommand=scrollbar.set)
+        self.result_list.config(yscrollcommand=scrollbar.set)
+        self.result_list.bind("<Double-1>", self.on_double_click)
+
+        query = self.entry.get()
+        datas = self.search_by_et(query)
+        self.result_list.delete(0, END)
+        for element in datas:
+            cul_name = element.find('culName').text
+            self.result_list.insert(END, cul_name)
+
+    def search_by_et(self, string):
+        result = []
+        for place_list in self.datas.iter('placeList'):
+            cul_name = place_list.find('culName').text
+            if string in cul_name:
+                result.append(place_list)
+        return result
 
     def __init__(self, parent_frame, x, y):
         self.x = x
         self.y = y
+        self.datas = load_data_performs()
         # 프레임1: 이미지, 엔트리, 버튼
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)
