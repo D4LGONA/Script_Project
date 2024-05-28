@@ -15,42 +15,33 @@ class Page3:
             # 리스트박스 업데이트
             self.update_lb()
 
-    def load(self): # todo
-        file_path = "datas/bookmark_data.txt"
+    def load(self):
+        file_path = "datas/bookmark_data.xml"
+        tree = ET.parse(file_path)
+        root = tree.getroot()
 
-        # bookmark_lists에 데이터 저장
+        # functions.bookmark_lists 배열 초기화
         functions.bookmark_lists = []
-        temp_data = {}
-        with open(file_path, 'r', encoding="utf-8") as file:
-            for line in file:
-                if line.strip():  # 빈 줄이 아닌 경우에만 처리
-                    key, value = line.strip().split(": ")
-                    temp_data[key.strip()] = value.strip()
-                else:
-                    functions.bookmark_lists.append(temp_data)
-                    temp_data = {}
 
-        # bookmark_lists에 저장된 데이터를 ElementTree 형식으로 변환하여 저장
-        root = ET.Element("bookmarks")
-        for data in functions.bookmark_lists:
-            bookmark = ET.SubElement(root, "bookmark")
-            for key, value in data.items():
-                ET.SubElement(bookmark, key).text = value
-
-        functions.bookmark_lists = []
-        for d in root:
-            functions.bookmark_lists.append(d)
+        # XML 요소들을 functions.bookmark_lists 배열에 추가
+        for element in root:
+            functions.bookmark_lists.append(element)
 
         print("Bookmark data loaded from:", file_path)
+        self.update_lb()
 
 
     def file(self):
+        import xml.etree.ElementTree as ET
+
         # 파일 경로 설정
         file_path = "datas/bookmark_data.txt"
         file_path2 = "datas/bookmark_data.xml"
 
         # 파일에 저장할 내용 작성
         file_content = ""
+        root = ET.Element("bookmarks")  # 루트 요소 생성
+
         for element in functions.bookmark_lists:
             cul_name = element.find('culName').text
             cul_tel = element.find('culTel').text
@@ -58,20 +49,30 @@ class Page3:
             gps_x = element.find('gpsX').text
             gps_y = element.find('gpsY').text
             address = functions.get_address(float(gps_y), float(gps_x))
+
             file_content += f"Cultural Name: {cul_name}\n"
             file_content += f"Tel: {cul_tel}\n"
             file_content += f"URL: {cul_home_url}\n"
             file_content += f"Location: {gps_x}, {gps_y}\n"
             file_content += f"Address: {address}\n"
             file_content += "\n"  # 요소 사이에 빈 줄 추가
-            with open(file_path, 'wb') as xml_file:
-                element.write(xml_file, encoding='utf-8', xml_declaration=True)
 
-        # 파일에 내용 저장
+            # 루트 요소에 현재 요소 추가
+            root.append(element)
+
+        # ElementTree 객체 생성
+        tree = ET.ElementTree(root)
+
+        # XML 파일에 저장
+        with open(file_path2, 'wb') as xml_file:
+            tree.write(xml_file, encoding='utf-8', xml_declaration=True)
+
+        # 텍스트 파일에 내용 저장
         with open(file_path, 'w', encoding="utf-8") as file:
             file.write(file_content)
 
         print("Bookmark data saved to:", file_path)
+        print("Bookmark XML data saved to:", file_path2)
 
 
     def update_lb(self):
