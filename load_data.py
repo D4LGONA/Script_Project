@@ -138,7 +138,6 @@ def load_data_performs():
         all_data_tree.write(xml_file, encoding='utf-8', xml_declaration=True)
     print("새로운 데이터로 XML 파일을 저장했습니다.")
 
-
     return all_data_tree
 
 def load_by_period():
@@ -183,3 +182,15 @@ def load_by_period():
     all_data_tree = ET.ElementTree(all_data_element)
 
     return all_data_tree
+
+def get_detail(seq):
+    url = 'http://www.culture.go.kr/openapi/rest/publicperformancedisplays/d/'
+    params = {'serviceKey': 'ipA7GxlvIHVrsFJKg6yO/ihFWarSbbwT+hG6ejOQMISeS9BSPgbgsf08SbC9qwgBEjJlzzj/yYMNMbFhrUZ09A==', 'seq': seq}
+
+    response = requests.get(url, params=params)
+    response.encoding = 'utf-8'
+    root = ET.fromstring(response.text)
+    # URL 값을 찾아서 반환
+    url_element = root.find('.//url')
+    if url_element is not None:
+        return url_element.text

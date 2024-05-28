@@ -1,8 +1,19 @@
 from tkinter import *
 import functions
 import xml.etree.ElementTree as ET
+from GUI.child_page import *
 
 class Page3:
+    def on_double_click(self, event):
+        index = self.lb.curselection()[0]
+        clicked = functions.bookmark_lists[index]
+
+        if clicked.find('culName') == None:
+            DetailWindow_perform(self.frame1, self.parent, clicked.find('title').text, clicked)
+        else:
+            DetailWindow_place(self.frame1, self.parent, clicked.find('culName').text, clicked)
+
+
     def remove(self):
         selected_index = self.lb.curselection()
         if selected_index:  # 만약 항목이 선택되었다면
@@ -43,19 +54,29 @@ class Page3:
         root = ET.Element("bookmarks")  # 루트 요소 생성
 
         for element in functions.bookmark_lists:
-            cul_name = element.find('culName').text
-            cul_tel = element.find('culTel').text
-            cul_home_url = element.find('culHomeUrl').text
-            gps_x = element.find('gpsX').text
-            gps_y = element.find('gpsY').text
-            address = functions.get_address(float(gps_y), float(gps_x))
+            if element.find('culName') != None:
+                cul_name = element.find('culName').text
+                cul_tel = element.find('culTel').text
+                cul_home_url = element.find('culHomeUrl').text
+                gps_x = element.find('gpsX').text
+                gps_y = element.find('gpsY').text
+                address = functions.get_address(float(gps_y), float(gps_x))
 
-            file_content += f"Cultural Name: {cul_name}\n"
-            file_content += f"Tel: {cul_tel}\n"
-            file_content += f"URL: {cul_home_url}\n"
-            file_content += f"Location: {gps_x}, {gps_y}\n"
-            file_content += f"Address: {address}\n"
-            file_content += "\n"  # 요소 사이에 빈 줄 추가
+                file_content += f"Cultural Name: {cul_name}\n"
+                file_content += f"Tel: {cul_tel}\n"
+                file_content += f"URL: {cul_home_url}\n"
+                file_content += f"Location: {gps_x}, {gps_y}\n"
+                file_content += f"Address: {address}\n"
+                file_content += "\n"  # 요소 사이에 빈 줄 추가
+            else:
+                cul_name = element.find('title').text
+                cul_period = element.find('startDate').text + " - " + element.find('endDate').text
+                cul_place = element.find('place').text
+
+                file_content += f"Name: {cul_name}\n"
+                file_content += f"Period: {cul_period}\n"
+                file_content += f"Place: {cul_place}\n"
+                file_content += "\n"  # 요소 사이에 빈 줄 추가
 
             # 루트 요소에 현재 요소 추가
             root.append(element)
@@ -79,14 +100,18 @@ class Page3:
         self.lb.delete(0, END)  # 기존 결과를 지우고 새로운 검색 결과를 표시합니다.
         for element in functions.bookmark_lists:
             # 각 요소에서 공연장 이름을 가져와 리스트박스에 추가합니다.
-            cul_name = element.find('culName').text
+            try:
+                cul_name = element.find('culName').text
+            except:
+                cul_name = element.find('title').text
             self.lb.insert(END, cul_name)
 
-    def __init__(self, parent_frame):
+    def __init__(self, parent_frame, parent):
+        self.parent = parent
         # 메인 라벨
         # 리스트박스 하나 개크게 만들기
         # 리스트박스 안의 내용은.. functions.bookmarks 리스트에 있음
-        self.frame1 = Frame(parent_frame, bd=2, relief="solid")
+        self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10, sticky="w")
 
         photo = PhotoImage(file="resources/r3.png")
@@ -104,13 +129,14 @@ class Page3:
         bookmark_label.grid(row=0, column=1, sticky="w")
 
         # 오른쪽 프레임
-        self.frame2 = Frame(parent_frame, bd=2, relief="solid")
+        self.frame2 = Frame(parent_frame)
         self.frame2.grid(row=1, column=0, padx=5, pady=10, sticky="nsew")
 
         # 리스트박스 추가
         self.lb = Listbox(self.frame2, width=70, height=20)
         self.lb.grid(row=0, column=0, sticky="nsew")  # 리스트박스를 그리드 셀에 배치
         self.lb.grid_columnconfigure(0, weight=1)  # 리스트박스의 열을 확장합니다.
+        self.lb.bind("<Double-1>", self.on_double_click)
 
         # 스크롤바 추가
         scrollbar = Scrollbar(self.frame2, orient=VERTICAL)

@@ -33,7 +33,7 @@ class MainGui:
         self.setUI()
         self.page1_instance = Page1(self.pages[0], self.x, self.y, self)
         self.page2_instance = Page2(self.pages[1], self.x, self.y, self)
-        self.page3_instance = Page3(self.pages[2])
+        self.page3_instance = Page3(self.pages[2], self)
 
         self.window.mainloop()
 

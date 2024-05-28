@@ -12,10 +12,13 @@ class Page1:
 
         self.listbox = Listbox(self.frame2)
         self.listbox.grid(row=1, column=1, sticky="nsew", padx=20)
+        self.listbox.bind("<Double-1>", self.on_double_click2)
 
+        self.listbox_list = []
 
         for e in self.lb_datas.iter('perforList'):
             self.listbox.insert(END, e.find('title').text)
+            self.listbox_list.append(e)
 
         self.label = Label(self.frame2, text="현재 진행중인 공연!")
         self.label.grid(row=0, column=1, sticky="n", padx=20, pady=5)
@@ -59,23 +62,29 @@ class Page1:
 
     def search_by_et(self, string):
         result = []
-        for place_list in self.datas.iter('perforList'):
-            if place_list is None:
+        self.listbox_list = []
+        for element in self.datas.iter('perforList'):
+            if element is None:
                 continue
-            title_element = place_list.find('title')
+            title_element = element.find('title')
             if title_element is not None and title_element.text:
                 cul_name = title_element.text
                 if string in cul_name:
-                    result.append(place_list)
+                    result.append(element)
+                    self.listbox_list.append(element)
         return result
+
 
     def on_double_click(self, event):
         index = self.result_list.curselection()[0]
-        clicked_text = self.result_list.get(index)
-        res = self.search_by_et(clicked_text)
+        clicked = self.listbox_list[index]
+        DetailWindow_perform(self.frame1, self.parent, clicked.find('title').text, clicked)
 
-        for element in res:
-            DetailWindow_perform(self.frame1, self.parent, clicked_text, element)
+    def on_double_click2(self, event):
+        index = self.listbox.curselection()[0]
+        clicked = self.listbox_list[index]
+
+        DetailWindow_perform(self.frame1, self.parent, clicked.find('title').text, clicked)
 
     def on_image_click(self):
         self.reset_frame2()

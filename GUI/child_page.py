@@ -20,13 +20,13 @@ class DetailWindow_place:
 
     def setup_ui(self):
         # 상세 정보를 출력할 프레임 생성
-        self.label_frame = Frame(self.window, bd=2, relief="solid")
+        self.label_frame = Frame(self.window)
         self.label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
 
-        map_frame = Frame(self.window, bd=2, relief="solid")
+        map_frame = Frame(self.window)
         map_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
-        button_frame = Frame(self.window, bd=2, relief="solid")
+        button_frame = Frame(self.window)
         button_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
         name_label = Label(self.label_frame, text="Name: " + self.element.find('culName').text)
@@ -108,6 +108,16 @@ class DetailWindow_place:
 
 
 class DetailWindow_perform:
+    def get_detail(self, element):
+        val = element.find('seq').text
+        r_value = get_detail(val)
+        print(r_value)
+        if r_value:
+            webbrowser.open_new(r_value)
+        else:
+            messagebox.showerror("사이트", "사이트 정보 없음!")
+
+
     def __init__(self, parentFrame, parent, title, element):
         self.topParent = parent
         self.window = Toplevel(parentFrame)
@@ -119,13 +129,13 @@ class DetailWindow_perform:
 
     def setup_ui(self):
         # 상세 정보를 출력할 프레임 생성
-        self.label_frame = Frame(self.window, bd=2, relief="solid")
+        self.label_frame = Frame(self.window)
         self.label_frame.grid(row=0, column=0, padx=10, pady=10, sticky='w', columnspan=2)
 
-        map_frame = Frame(self.window, bd=2, relief="solid")
+        map_frame = Frame(self.window)
         map_frame.grid(row=1, column=0, padx=10, pady=10, sticky='w')
 
-        button_frame = Frame(self.window, bd=2, relief="solid")
+        button_frame = Frame(self.window)
         button_frame.grid(row=1, column=1, padx=10, pady=10, sticky='w')
 
         name_label = Label(self.label_frame, text="Name: " + self.element.find('title').text)
@@ -136,30 +146,44 @@ class DetailWindow_perform:
 
         url_label = Label(self.label_frame, text="URL: click!", cursor="hand2", wraplength=300, justify="left")
         url_label.grid(row=2, sticky='w')
-        url_label.bind("<Button-1>", lambda e: webbrowser.open_new(self.element.find('culHomeUrl').text))
+        url_label.bind("<Button-1>", lambda e: self.get_detail(self.element))
 
         gps_label = Label(self.label_frame,
-                          text="place: " + self.element.find('place').text)
+                          text="Place: " + self.element.find('place').text)
         gps_label.grid(row=3, sticky='w')
 
-        url = self.element.find('thumbnail').text
-        print(url)
-        response = requests.get(url)
-        image_data = response.content
-        content_type = response.headers['Content-Type']
+        # 좌표정보가 있는 경우
+        if self.element.find('gpsX').text is not None and self.element.find('gpsY').text is not None:
+            gps_x = float(self.element.find('gpsX').text)
+            gps_y = float(self.element.find('gpsY').text)
 
-        # Content-Type이 이미지인지 확인
-        if 'image' in content_type:
-            image_data = response.content
-            with open("image_data.jpg", "wb") as f:
-                f.write(image_data)
+            map_widget = TkinterMapView(map_frame, width=250, height=250, corner_radius=0)
+            map_widget.set_position(gps_y, gps_x)
+            map_widget.set_marker(gps_y, gps_x, text=self.element.find('title').text)
+            map_widget.pack(fill="both", expand=True)
+
         else:
-            print("이미지 형식이 아닙니다:", content_type)
+            # Thumbnail 이미지 표시
+            thumbnail_url = self.element.find('thumbnail').text
+            if thumbnail_url:
+                try:
+                    response = requests.get(thumbnail_url)
+                    image_data = response.content
+                    image = Image.open(BytesIO(image_data))
+                    image.thumbnail((250, 250))
+                    photo = ImageTk.PhotoImage(image)
 
-        image = Image.open(BytesIO(image_data))
-        photo = ImageTk.PhotoImage(image)
-        label = Label(map_frame, image=photo)
-        label.pack()
+                    # 이미지를 띄울 라벨 생성
+                    label = Label(map_frame, image=photo)
+                    label.image = photo  # 이미지가 GC에 의해 삭제되지 않도록 참조를 유지합니다.
+                    label.pack()
+                except:
+                    photo = ImageTk.PhotoImage(file='resources/no_image.png')
+
+                    # 이미지를 띄울 라벨 생성
+                    label = Label(map_frame, image=photo)
+                    label.image = photo  # 이미지가 GC에 의해 삭제되지 않도록 참조를 유지합니다.
+                    label.pack()
 
         b = Button(button_frame, text="북마크", command=lambda: self.bookmark(self.element), width=8, height=2)
         b.grid(row=0, column=0, padx=10, pady=10)
@@ -170,25 +194,22 @@ class DetailWindow_perform:
         b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
         b.grid(row=3, column=0, padx=10, pady=10)
 
-    def email(self):
+    def email(self): # todo
         pass
 
-    def file(self, element):
-        cul_name = element.find('culName').text
+    def file(self, element): # todo
+        cul_name = element.find('title').text
         file_path = "datas/" + cul_name + ".txt"
 
         # 파일에 저장할 내용 작성
         file_content = ""
-        cul_tel = element.find('culTel').text
-        cul_home_url = element.find('culHomeUrl').text
-        gps_x = element.find('gpsX').text
-        gps_y = element.find('gpsY').text
-        address = functions.get_address(float(gps_y), float(gps_x))
-        file_content += f"Cultural Name: {cul_name}\n"
-        file_content += f"Tel: {cul_tel}\n"
-        file_content += f"URL: {cul_home_url}\n"
-        file_content += f"Location: {gps_x}, {gps_y}\n"
-        file_content += f"Address: {address}\n"
+        cul_period = element.find('startDate').text + " - " + element.find('endDate').text
+        cul_place = element.find('place').text
+        file_content += f"Name: {cul_name}\n"
+        file_content += f"Period: {cul_period}\n"
+        file_content += f"Place: {cul_place}\n"
+
+        print(file_content)
 
         # 파일에 내용 저장
         with open(file_path, 'w', encoding="utf-8") as file:
@@ -204,4 +225,4 @@ class DetailWindow_perform:
         functions.bookmark_lists.append(element)
         if t != len(functions.bookmark_lists):
             self.topParent.page3_instance.update_lb()
-            messagebox.showinfo("북마크", element.find('culName').text+" 저장 완료!")
+            messagebox.showinfo("북마크", element.find('title').text+" 저장 완료!")
