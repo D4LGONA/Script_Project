@@ -1,10 +1,12 @@
-Name: 고등어
-Period: 20240529 - 20240613
-Place: 국립정동극장 세실 (구.세실극장)
+Cultural Name: KPU 아트센터
+Tel: 031-8041-0961
+URL: http://arts.kpu.ac.kr
+Location: 126.73212946572819, 37.34172236339199
+Address: 2126 Jeongwang-dong, Siheung-si, Gyeonggi-do, South Korea
 
-Cultural Name: 남동아시아드
-Tel: 032)715-5173
-URL: https://www.icsports.or.kr/fmcs/71
-Location: 126.7337942, 37.4379178
-Address: 540 Sorae-ro, Namdong-gu, Incheon, South Korea
+Cultural Name: 메가박스 [송도]
+Tel: 1544-0070
+URL: https://www.megabox.co.kr/
+Location: 126.6628415, 37.3786609
+Address: 176-5 Songdo-dong, Yeonsu-gu, Incheon, South Korea
 

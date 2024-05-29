@@ -2,6 +2,7 @@ from tkinter import *
 import functions
 import xml.etree.ElementTree as ET
 from GUI.child_page import *
+from tkinter import messagebox
 
 class Page3:
     def on_double_click(self, event):
@@ -18,7 +19,7 @@ class Page3:
         selected_index = self.lb.curselection()
         if selected_index:  # 만약 항목이 선택되었다면
             selected_item = self.lb.get(selected_index[0])  # 선택된 항목의 인덱스를 사용하여 해당 항목을 가져옵니다.
-            print("Selected item:", selected_item)
+            messagebox.showinfo('삭제', selected_item+'을(를) 삭제함!')
 
             # functions.bookmark_lists에서 선택된 항목을 삭제합니다.
             del functions.bookmark_lists[selected_index[0]]
@@ -38,7 +39,6 @@ class Page3:
         for element in root:
             functions.bookmark_lists.append(element)
 
-        print("Bookmark data loaded from:", file_path)
         self.update_lb()
 
 
@@ -92,8 +92,7 @@ class Page3:
         with open(file_path, 'w', encoding="utf-8") as file:
             file.write(file_content)
 
-        print("Bookmark data saved to:", file_path)
-        print("Bookmark XML data saved to:", file_path2)
+        messagebox.showinfo('저장', file_path +"에 저장됨!")
 
 
     def update_lb(self):
