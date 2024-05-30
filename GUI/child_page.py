@@ -6,6 +6,11 @@ from tkinter import messagebox
 from load_data import *
 from PIL import Image, ImageTk
 from io import BytesIO
+from tkinter import simpledialog
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import formataddr
 
 # 아예 chilepage를 따로떼서 북마크 눌렀을때 저기 추가하고
 class DetailWindow_place:
@@ -71,7 +76,40 @@ class DetailWindow_place:
         b.grid(row=3, column=0, padx=10, pady=10)
 
     def email(self):
-        pass
+        recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
+        if recipient_email:
+            try:
+                # 이메일 전송을 위한 SMTP 서버 설정
+                smtp_server = 'smtp.gmail.com'
+                smtp_port = 587  # Gmail SMTP 포트 번호
+                sender_email = 'elephant2297@tukorea.ac.kr'  # 보내는 사람의 이메일 주소
+                sender_password = 'pxhe zyov urbc itoe'  # 보내는 사람의 이메일 비밀번호
+
+                # 이메일 제목과 내용 작성
+                subject = "문화 장소 정보"
+                body = f"#문화 장소 정보#\n"
+                body += f"이름: {self.element.find('culName').text}\n"
+                body += f"전화번호: {self.element.find('culTel').text}\n"
+                body += f"URL: {self.element.find('culHomeUrl').text}\n"
+                body += f"위치: {self.element.find('gpsY').text}, {self.element.find('gpsX').text}\n"
+                body += f"주소: {functions.get_address(float(self.element.find('gpsY').text), float(self.element.find('gpsX').text))}\n"
+
+                # MIME 메시지 생성
+                message = MIMEMultipart()
+                message['From'] = formataddr(('Sender', sender_email))
+                message['To'] = recipient_email
+                message['Subject'] = subject
+                message.attach(MIMEText(body, 'plain'))
+
+                # SMTP 서버에 연결하여 이메일 전송
+                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, recipient_email, message.as_string())
+
+                messagebox.showinfo("이메일 전송", "이메일을 성공적으로 전송했습니다.")
+            except Exception as e:
+                messagebox.showerror("이메일 전송 오류", f"이메일을 전송하는 중 오류가 발생했습니다: {e}")
 
     def file(self, element):
         cul_name = element.find('culName').text
@@ -195,7 +233,39 @@ class DetailWindow_perform:
         b.grid(row=3, column=0, padx=10, pady=10)
 
     def email(self): # todo
-        pass
+        recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
+        if recipient_email:
+            try:
+                # 이메일 전송을 위한 SMTP 서버 설정
+                smtp_server = 'smtp.gmail.com'
+                smtp_port = 587  # Gmail SMTP 포트 번호
+                sender_email = 'elephant2297@tukorea.ac.kr'  # 보내는 사람의 이메일 주소
+                sender_password = 'pxhe zyov urbc itoe'  # 보내는 사람의 이메일 비밀번호
+
+                # 이메일 제목과 내용 작성
+                subject = "문화 공연 정보"
+                body = f"#문화 공연 정보#\n"
+                body += f"이름: {self.element.find('title').text}\n"
+                body += f"기간: {self.element.find('startDate').text + " - " + self.element.find('endDate').text}\n"
+                body += f"장소: {self.element.find('place').text}\n"
+
+                # MIME 메시지 생성
+                message = MIMEMultipart()
+                message['From'] = formataddr(('Sender', sender_email))
+                message['To'] = recipient_email
+                message['Subject'] = subject
+                message.attach(MIMEText(body, 'plain'))
+
+                # SMTP 서버에 연결하여 이메일 전송
+                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, recipient_email, message.as_string())
+
+                messagebox.showinfo("이메일 전송", "이메일을 성공적으로 전송했습니다.")
+            except Exception as e:
+                messagebox.showerror("이메일 전송 오류", f"이메일을 전송하는 중 오류가 발생했습니다: {e}")
+
 
     def file(self, element): # todo
         cul_name = element.find('title').text

@@ -105,6 +105,50 @@ class Page3:
                 cul_name = element.find('title').text
             self.lb.insert(END, cul_name)
 
+    def email(self):
+        recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
+        if recipient_email:
+            try:
+                # 이메일 전송을 위한 SMTP 서버 설정
+                smtp_server = 'smtp.gmail.com'
+                smtp_port = 587  # Gmail SMTP 포트 번호
+                sender_email = 'elephant2297@tukorea.ac.kr'  # 보내는 사람의 이메일 주소
+                sender_password = 'pxhe zyov urbc itoe'  # 보내는 사람의 이메일 비밀번호
+
+                # 이메일 제목과 내용 작성
+                subject = "정보 안내"
+                body = ""
+                for element in functions.bookmark_lists:
+                    if element.find('culName') != None:
+                        body += f"#문화 장소 정보#\n"
+                        body += f"이름: {element.find('culName').text}\n"
+                        body += f"전화번호: {element.find('culTel').text}\n"
+                        body += f"URL: {element.find('culHomeUrl').text}\n"
+                        body += f"위치: {element.find('gpsY').text}, {element.find('gpsX').text}\n"
+                        body += f"주소: {functions.get_address(float(element.find('gpsY').text), float(element.find('gpsX').text))}\n\n"
+                    else:
+                        body += f"#문화 공연 정보#\n"
+                        body += f"이름: {element.find('title').text}\n"
+                        body += f"기간: {element.find('startDate').text + " - " + element.find('endDate').text}\n"
+                        body += f"장소: {element.find('place').text}\n\n"
+
+                # MIME 메시지 생성
+                message = MIMEMultipart()
+                message['From'] = formataddr(('Sender', sender_email))
+                message['To'] = recipient_email
+                message['Subject'] = subject
+                message.attach(MIMEText(body, 'plain'))
+
+                # SMTP 서버에 연결하여 이메일 전송
+                with smtplib.SMTP(smtp_server, smtp_port) as server:
+                    server.starttls()
+                    server.login(sender_email, sender_password)
+                    server.sendmail(sender_email, recipient_email, message.as_string())
+
+                messagebox.showinfo("이메일 전송", "이메일을 성공적으로 전송했습니다.")
+            except Exception as e:
+                messagebox.showerror("이메일 전송 오류", f"이메일을 전송하는 중 오류가 발생했습니다: {e}")
+
     def __init__(self, parent_frame, parent):
         self.parent = parent
         # 메인 라벨
@@ -156,7 +200,7 @@ class Page3:
         button1.pack(pady=5)
         button2 = Button(button_frame, text="삭제", command=self.remove)
         button2.pack(pady=5)
-        button3 = Button(button_frame, text="이메일")
+        button3 = Button(button_frame, text="이메일", command=self.email)
         button3.pack(pady=5)
         button4 = Button(button_frame, text="텔레그램")
         button4.pack(pady=5)
