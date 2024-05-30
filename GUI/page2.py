@@ -7,6 +7,9 @@ from functions import *
 
 
 class Page2:
+    def graph(self):
+        pass
+
 
     def reset_frame2(self):
         for widget in self.frame2.winfo_children():
@@ -108,8 +111,6 @@ class Page2:
 
         self.lb_datas = ET.ElementTree(all_data_element)
 
-
-
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)
 
@@ -124,6 +125,9 @@ class Page2:
 
         self.search_button = Button(self.frame1, text="검색", command=self.search, width=8, height=2)
         self.search_button.grid(row=0, column=2, padx=5, pady=10)
+
+        self.graph_button = Button(self.frame1, text="그래프", command=self.graph, width=8, height=2)
+        self.graph_button.grid(row=1, column=2, padx=5, pady=10)
 
         self.frame2 = Frame(parent_frame)
         self.frame2.grid(row=1, column=0, padx=5, pady=10)

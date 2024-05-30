@@ -60,3 +60,24 @@ def calculate_distance(lat1, lon1, lat2, lon2):
 
     distance = R * c
     return distance
+
+def get_location_info(latitude, longitude):
+    api_key = 'AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY'
+    url = f'https://maps.googleapis.com/maps/api/geocode/json?latlng={latitude},{longitude}&key={api_key}'
+
+    response = requests.get(url)
+    response.encoding = 'utf-8'
+
+    if response.status_code == 200:
+        result = response.json()
+        if result['results']:
+            for component in result['results'][0]['address_components']:
+                if 'administrative_area_level_1' in component['types']:
+                    return component['long_name']
+                if 'administrative_area_level_2' in component['types']:
+                    return component['long_name']
+
+    print(f"Response status code: {response.status_code}")
+    print(f"Response content: {response.text}")
+
+    return None
