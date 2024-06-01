@@ -83,7 +83,6 @@ class Page1:
     def on_double_click2(self, event):
         index = self.listbox.curselection()[0]
         clicked = self.listbox_list[index]
-
         DetailWindow_perform(self.frame1, self.parent, clicked.find('title').text, clicked)
 
     def on_image_click(self):

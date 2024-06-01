@@ -12,7 +12,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
 
-# 아예 chilepage를 따로떼서 북마크 눌렀을때 저기 추가하고
 class DetailWindow_place:
     def __init__(self, parentFrame, parent, title, element):
         self.topParent = parent
@@ -232,7 +231,7 @@ class DetailWindow_perform:
         b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
         b.grid(row=3, column=0, padx=10, pady=10)
 
-    def email(self): # todo
+    def email(self):
         recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
         if recipient_email:
             try:
@@ -267,7 +266,7 @@ class DetailWindow_perform:
                 messagebox.showerror("이메일 전송 오류", f"이메일을 전송하는 중 오류가 발생했습니다: {e}")
 
 
-    def file(self, element): # todo
+    def file(self, element):
         cul_name = element.find('title').text
         file_path = "datas/" + cul_name + ".txt"
 

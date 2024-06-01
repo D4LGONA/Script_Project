@@ -1,6 +1,8 @@
 # AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY
 import requests
 from math import *
+import tkinter as tk
+from collections import Counter
 
 bookmark_lists = []
 
@@ -81,3 +83,54 @@ def get_location_info(latitude, longitude):
     print(f"Response content: {response.text}")
 
     return None
+
+
+
+def read_data(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        data = file.readlines()
+    data = [line.strip() for line in data if line.strip()]
+    return data
+
+def count_locations(data):
+    return Counter(data)
+
+def create_canvas_graph(root, location_counts):
+    canvas_width = 1000
+    canvas_height = 800
+    canvas = tk.Canvas(root, width=canvas_width, height=canvas_height)
+    canvas.pack()
+
+    max_count = max(location_counts.values())
+    x_offset = 50
+    y_offset = 700
+    bar_width = 30
+    spacing = 20  # Reduced spacing between bars
+
+    for i, (location, count) in enumerate(location_counts.items()):
+        bar_height = (count / max_count) * 500  # Scale bar height to fit canvas
+        x_position = x_offset + i * (bar_width + spacing)
+        canvas.create_rectangle(x_position, y_offset - bar_height, x_position + bar_width, y_offset, fill="skyblue")
+        canvas.create_text(x_position + bar_width / 2, y_offset + 10, text=location, anchor=tk.N, angle=45, font=("Arial", 8))
+        canvas.create_text(x_position + bar_width / 2, y_offset - bar_height - 10, text=str(count), anchor=tk.S, font=("Arial", 8))
+
+def main(file_path, parent=None):
+    data = read_data(file_path)
+    location_counts = count_locations(data)
+
+    if parent is None:
+        root = tk.Tk()
+    else:
+        root = tk.Toplevel(parent)
+
+    root.title("그래프")
+
+    window_width = 1000
+    window_height = 800
+    root.geometry(f"{window_width}x{window_height}")
+
+    create_canvas_graph(root, location_counts)
+
+    if parent is None:
+        root.mainloop()
+

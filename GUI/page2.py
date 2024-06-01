@@ -4,11 +4,12 @@ from load_data import *
 from GUI.child_page import *
 from tkinter import messagebox
 from functions import *
+from tkinter.ttk import Combobox
 
 
 class Page2:
     def graph(self):
-        pass
+        main("datas/locations_clubs.txt", self.frame1)
 
 
     def reset_frame2(self):
@@ -16,12 +17,17 @@ class Page2:
             widget.destroy()
         self.map()
 
+        self.listbox_list = []
+
         self.listbox = Listbox(self.frame2)
         self.listbox.grid(row=1, column=1, sticky="nsew", padx=20)
         self.listbox.bind("<Double-1>", self.on_double_click2)
 
-        for e in self.lb_datas.iter('placeList'):
+        # 데이터를 가나다순으로 정렬하여 리스트박스에 삽입
+        sorted_data = sorted(self.lb_datas.iter('placeList'), key=lambda e: e.find('culName').text)
+        for e in sorted_data:
             self.listbox.insert(END, e.find('culName').text)
+            self.listbox_list.append(e)
 
         self.label = Label(self.frame2, text="근처에 있는 문화공간들!")
         self.label.grid(row=0, column=1, sticky="n", padx=20, pady=5)
@@ -73,28 +79,28 @@ class Page2:
             self.result_list.insert(END, cul_name)
 
     def search_by_et(self, string):
+        selected_category = self.category_combobox.get()
         result = []
+        self.listbox_list = []
+
         for place_list in self.datas.iter('placeList'):
             cul_name = place_list.find('culName').text
-            if string in cul_name:
+            if string in cul_name and (selected_category == '전체' or place_list.find('culGrpName').text == selected_category):
                 result.append(place_list)
+                self.listbox_list.append(place_list)
+        result.sort(key=lambda e: e.find('culName').text)
+        self.listbox_list.sort(key=lambda e: e.find('culName').text)
         return result
 
     def on_double_click(self, event):
         index = self.result_list.curselection()[0]
-        clicked_text = self.result_list.get(index)
-        res = self.search_by_et(clicked_text)
-
-        for element in res:
-            DetailWindow_place(self.frame1, self.parent, clicked_text, element)
+        clicked = self.listbox_list[index]
+        DetailWindow_place(self.frame1, self.parent, clicked.find('culName').text, clicked)
 
     def on_double_click2(self, event):
         index = self.listbox.curselection()[0]
-        clicked_text = self.listbox.get(index)
-        res = self.search_by_et(clicked_text)
-
-        for element in res:
-            DetailWindow_place(self.frame1, self.parent, clicked_text, element)
+        clicked = self.listbox_list[index]
+        DetailWindow_place(self.frame1, self.parent, clicked.find('culName').text, clicked)
 
     def on_image_click(self):
         self.reset_frame2()
@@ -103,7 +109,19 @@ class Page2:
         self.parent = parent
         self.x = x
         self.y = y
-        self.datas = load_all_data_clubs()
+        td1 = load_all_data_clubs()
+        td2 = load_all_data_mus()
+        td3 = load_all_data_arts()
+        td4 = load_all_data_halls()
+        td5 = load_all_data_libs()
+        troot = td1.getroot()
+        troot.extend(td2.getroot())
+        troot.extend(td3.getroot())
+        troot.extend(td4.getroot())
+        troot.extend(td5.getroot())
+        self.datas = ET.ElementTree(troot)
+
+
         all_data_element = ET.Element('all_data')
         for e in self.datas.iter('placeList'):
             if calculate_distance(float(e.find('gpsY').text), float(e.find('gpsX').text), self.x, self.y) < 10: # todo: 거리를 어떻게할까
@@ -118,16 +136,20 @@ class Page2:
         resized_photo = photo.subsample(4, 4)
         button = Button(self.frame1, image=resized_photo, command=self.on_image_click, bd=0, highlightthickness=0)
         button.photo = resized_photo
-        button.grid(row=0, column=0, sticky=W, padx=5)
+        button.grid(row=0, column=0, sticky=W, padx=5, rowspan=2)
 
         self.entry = Entry(self.frame1, width=50)
         self.entry.grid(row=0, column=1, padx=5, pady=10)
 
         self.search_button = Button(self.frame1, text="검색", command=self.search, width=8, height=2)
-        self.search_button.grid(row=0, column=2, padx=5, pady=10)
+        self.search_button.grid(row=0, column=2, padx=5, pady=0)
 
         self.graph_button = Button(self.frame1, text="그래프", command=self.graph, width=8, height=2)
-        self.graph_button.grid(row=1, column=2, padx=5, pady=10)
+        self.graph_button.grid(row=1, column=2, padx=5, pady=0)
+
+        self.category_combobox = Combobox(self.frame1, values=["전체", "공연장", "미술관", "박물관", "문화/복지/시군구회관", "도서관"], state="readonly")
+        self.category_combobox.set("전체")  # 초기값 설정
+        self.category_combobox.grid(row=1, column=1, padx=5, pady=10)
 
         self.frame2 = Frame(parent_frame)
         self.frame2.grid(row=1, column=0, padx=5, pady=10)
