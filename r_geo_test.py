@@ -2,7 +2,7 @@ from geopy.geocoders import Nominatim
 
 
 def get_location_details(latitude, longitude):
-    geolocator = Nominatim(user_agent="hellow")
+    geolocator = Nominatim(user_agent="qwertyasdfgh")
     location = geolocator.reverse((latitude, longitude), language='ko')
 
     if location:
