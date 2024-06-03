@@ -9,7 +9,19 @@ from tkinter.ttk import Combobox
 
 class Page2:
     def graph(self):
-        main("datas/locations_clubs.txt", self.frame1)
+        selected_category = self.category_combobox.get()
+        if selected_category == '공연장':
+            main("datas/locations_clubs.txt", self.frame1)
+        elif selected_category == '미술관':
+            main("datas/locations_arts.txt", self.frame1)
+        elif selected_category == '박물관':
+            main("datas/locations_mus.txt", self.frame1)
+        elif selected_category == "문화/복지/시군구회관":
+            main("datas/locations_halls.txt", self.frame1)
+        elif selected_category == '도서관':
+            main("datas/locations_libs.txt", self.frame1)
+        else:
+            messagebox.showerror("에러", "콤보박스의 값을 변경해야 함!")
 
 
     def reset_frame2(self):
