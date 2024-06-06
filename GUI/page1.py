@@ -94,6 +94,7 @@ class Page1:
         self.y = y
         self.datas = load_data_performs()
         self.lb_datas = load_by_period()
+        functions.perform_lists = self.datas
 
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)

@@ -132,6 +132,7 @@ class Page2:
         troot.extend(td4.getroot())
         troot.extend(td5.getroot())
         self.datas = ET.ElementTree(troot)
+        functions.places_lists = self.datas
 
 
         all_data_element = ET.Element('all_data')

@@ -3,8 +3,11 @@ import requests
 from math import *
 import tkinter as tk
 from collections import Counter
+import xml.etree.ElementTree as ET
 
 bookmark_lists = []
+places_lists = ET.ElementTree()
+perform_lists = ET.ElementTree()
 
 def get_location(): # 현재 위치 가져오는 함수
     api_key = 'AIzaSyBenORD7xC7otKoc1M6EmDOZMgAz0u9epY'
