@@ -14,7 +14,6 @@ import traceback
 import functions
 
 # Constants
-KEY = '여기에 API KEY를 입력하세요'
 TOKEN = '7276299407:AAGpq-uyl1Hqodh_kx061KghULdzi0Rxp-E'
 MAX_MSG_LENGTH = 300
 BASE_URL = 'http://openapi.molit.go.kr:8081/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTrade?ServiceKey=' + KEY

@@ -163,6 +163,7 @@ def handle(msg):
 
 # Main execution
 if __name__ == '__main__':
+    '''
     today = date.today()
     current_month = today.strftime('%Y%m')
 
@@ -174,6 +175,7 @@ if __name__ == '__main__':
 
     bot.message_loop(handle)
     print('Listening...')
+    '''
 
     MainGui()
 

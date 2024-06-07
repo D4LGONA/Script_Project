@@ -4,6 +4,7 @@ from math import *
 import tkinter as tk
 from collections import Counter
 import xml.etree.ElementTree as ET
+from datetime import datetime
 
 bookmark_lists = []
 places_lists = ET.ElementTree()
@@ -117,23 +118,14 @@ def create_canvas_graph(root, location_counts):
         canvas.create_text(x_position + bar_width / 2, y_offset + 10, text=location, anchor=tk.N, angle=45, font=("Arial", 8))
         canvas.create_text(x_position + bar_width / 2, y_offset - bar_height - 10, text=str(count), anchor=tk.S, font=("Arial", 8))
 
-def main(file_path, parent=None):
-    data = read_data(file_path)
-    location_counts = count_locations(data)
 
-    if parent is None:
-        root = tk.Tk()
-    else:
-        root = tk.Toplevel(parent)
 
-    root.title("그래프")
+def is_valid_date(date_string):
+    try:
+        # 날짜 형식을 지정하여 datetime 객체로 변환 시도
+        datetime.strptime(date_string, '%Y%m%d')
+        return True
+    except ValueError:
+        return False
 
-    window_width = 1000
-    window_height = 800
-    root.geometry(f"{window_width}x{window_height}")
-
-    create_canvas_graph(root, location_counts)
-
-    if parent is None:
-        root.mainloop()
 

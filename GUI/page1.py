@@ -1,11 +1,19 @@
 from tkinter import *
+from tkinter.ttk import Combobox
+
 from tkintermapview import TkinterMapView
 import functions
 from load_data import *
 from GUI.child_page import *
+import spam
+from datetime import datetime
+
+
 
 class Page1:
     def reset_frame2(self):
+        self.from_entry.delete(0, 'end')
+        self.to_entry.delete(0, 'end')
         for widget in self.frame2.winfo_children():
             widget.destroy()
         self.map()
@@ -37,6 +45,14 @@ class Page1:
         webbrowser.open_new(string)
 
     def search(self):
+        from_day = self.from_entry.get()
+        to_day = self.to_entry.get()
+        if not functions.is_valid_date(from_day) or not functions.is_valid_date(to_day):
+            messagebox.showerror("에러", "잘못된 날짜 입력!")
+            self.from_entry.delete(0, 'end')
+            self.to_entry.delete(0, 'end')
+            return
+
         for widget in self.frame2.winfo_children():
             widget.destroy()
 
@@ -61,6 +77,8 @@ class Page1:
             self.result_list.insert(END, cul_name)
 
     def search_by_et(self, string):
+        from_day = self.from_entry.get()
+        to_day = self.to_entry.get()
         result = []
         self.listbox_list = []
         for element in self.datas.iter('perforList'):
@@ -69,7 +87,9 @@ class Page1:
             title_element = element.find('title')
             if title_element is not None and title_element.text:
                 cul_name = title_element.text
-                if string in cul_name:
+                if element.find('startDate').text is None or element.find('endDate').text is None:
+                    continue
+                if string in cul_name and spam.are_ranges_overlapping(from_day, to_day, element.find('startDate').text, element.find('endDate').text):
                     result.append(element)
                     self.listbox_list.append(element)
         return result
@@ -93,9 +113,19 @@ class Page1:
         self.x = x
         self.y = y
         self.datas = load_data_performs()
-        self.lb_datas = load_by_period()
-        functions.perform_lists = self.datas
+        self.lb_datas = ET.ElementTree(ET.Element("all_data"))
 
+        for element in self.datas.iter('perforList'):
+            if element is None:
+                continue
+            if element.find('title') is not None and element.find('title').text:
+                if element.find('startDate').text is None or element.find('endDate').text is None:
+                    continue
+                if spam.is_date_in_range(element.find('startDate').text, element.find('endDate').text,
+                                         datetime.now().strftime('%Y%m%d')):
+                    self.lb_datas.getroot().append(element)
+
+        functions.perform_lists = self.datas
         self.frame1 = Frame(parent_frame)
         self.frame1.grid(row=0, column=0, padx=5, pady=10)
 
@@ -103,13 +133,23 @@ class Page1:
         resized_photo = photo.subsample(4, 4)
         button = Button(self.frame1, image=resized_photo, command=self.on_image_click, bd=0, highlightthickness=0)
         button.photo = resized_photo
-        button.grid(row=0, column=0, sticky=W, padx=5)
+        button.grid(row=0, column=0, sticky=W, padx=5, rowspan=2)
 
         self.entry = Entry(self.frame1, width=50)
-        self.entry.grid(row=0, column=1, padx=5, pady=10)
+        self.entry.grid(row=0, column=1, padx=5, pady=10, columnspan=6)
 
         self.search_button = Button(self.frame1, text="검색", command=self.search, width=8, height=2)
-        self.search_button.grid(row=0, column=2, padx=5, pady=10)
+        self.search_button.grid(row=0, column=7, padx=5, pady=10)
+
+        period_label = Label(self.frame1, text="기간:")
+        period_label.grid(row=1, column=1, padx=5, pady=2, sticky=W)
+        self.from_entry = Entry(self.frame1, width=10)
+        self.from_entry.grid(row=1, column=2, pady=2, sticky=W)
+
+        mid_label = Label(self.frame1, text="-")
+        mid_label.grid(row=1, column=3, pady=2, sticky=W)
+        self.to_entry = Entry(self.frame1, width=10)
+        self.to_entry.grid(row=1, column=4, pady=2, sticky=W)
 
         self.frame2 = Frame(parent_frame)
         self.frame2.grid(row=1, column=0, padx=5, pady=10)
