@@ -1,7 +1,3 @@
-Name: 고등어
-Period: 20240529 - 20240613
-Place: 국립정동극장 세실 (구.세실극장)
-
 Cultural Name: 클럽 FF
 Tel: 010-9025-3407
 URL: https://clubff.modoo.at

@@ -126,3 +126,5 @@ with open('datas/locations_arts.txt', 'w', encoding='utf-8') as file:
         except:
             cnt += 1
             continue
+
+

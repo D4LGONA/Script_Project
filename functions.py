@@ -118,7 +118,26 @@ def create_canvas_graph(root, location_counts):
         canvas.create_text(x_position + bar_width / 2, y_offset + 10, text=location, anchor=tk.N, angle=45, font=("Arial", 8))
         canvas.create_text(x_position + bar_width / 2, y_offset - bar_height - 10, text=str(count), anchor=tk.S, font=("Arial", 8))
 
+def main(file_path, parent=None):
+    data = read_data(file_path)
+    location_counts = count_locations(data)
 
+    if parent is None:
+        root = tk.Tk()
+    else:
+        root = tk.Toplevel(parent)
+
+    root.title("그래프")
+
+    # Set the window size to match the canvas size
+    window_width = 1000
+    window_height = 800
+    root.geometry(f"{window_width}x{window_height}")
+
+    create_canvas_graph(root, location_counts)
+
+    if parent is None:
+        root.mainloop()
 
 def is_valid_date(date_string):
     try:

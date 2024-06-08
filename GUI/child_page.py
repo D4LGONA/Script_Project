@@ -11,6 +11,7 @@ import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formataddr
+from itertools import count
 
 class DetailWindow_place:
     def __init__(self, parentFrame, parent, title, element):
@@ -19,8 +20,22 @@ class DetailWindow_place:
         self.window.title(title)
         self.window.geometry("400x400")
 
+        self.root = parentFrame
         self.element = element
         self.setup_ui()
+
+    def update_animation(self):
+        if self.running:
+            try:
+                # 현재 프레임 인덱스를 업데이트하고 버튼 이미지를 설정합니다
+                self.frame_index = (self.frame_index + 1) % len(self.frames)
+                self.my_button.configure(image=self.frames[self.frame_index])
+                self.root.after(100, self.update_animation)  # 필요에 따라 지연 시간을 조정합니다
+            except:
+                self.on_closing()
+
+    def on_closing(self):
+        self.running = False  # 애니메이션 루프 플래그 비활성화
 
     def setup_ui(self):
         # 상세 정보를 출력할 프레임 생성
@@ -71,8 +86,22 @@ class DetailWindow_place:
         b.grid(row=1, column=0, padx=10, pady=10)
         b = Button(button_frame, text="파일", command=lambda: self.file(self.element), width=8, height=2)
         b.grid(row=2, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
-        b.grid(row=3, column=0, padx=10, pady=10)
+        self.frames = []
+        for i in count():
+            try:
+                frame = PhotoImage(file="resources/bc.gif", format=f"gif -index {i}")
+                resized_frame = frame.subsample(8, 8)  # 크기를 조정합니다
+                self.frames.append(resized_frame)
+            except Exception:
+                break
+
+        self.frame_index = 0
+        self.my_button = Button(button_frame, text="", image=self.frames[self.frame_index])
+        self.my_button.grid(row=3, column=0, padx=10, pady=10)
+
+        self.running = True  # 애니메이션 루프 플래그
+
+        self.update_animation()
 
     def email(self):
         recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
@@ -133,9 +162,6 @@ class DetailWindow_place:
 
         messagebox.showinfo("저장", file_path + "에 저장됨!")
 
-    def tele(self): # todo
-        pass
-
     def bookmark(self, element):
         t = len(functions.bookmark_lists)
         functions.bookmark_lists.append(element)
@@ -154,6 +180,18 @@ class DetailWindow_perform:
         else:
             messagebox.showerror("사이트", "사이트 정보 없음!")
 
+    def update_animation(self):
+        if self.running:
+            try:
+                # 현재 프레임 인덱스를 업데이트하고 버튼 이미지를 설정합니다
+                self.frame_index = (self.frame_index + 1) % len(self.frames)
+                self.my_button.configure(image=self.frames[self.frame_index])
+                self.root.after(100, self.update_animation)  # 필요에 따라 지연 시간을 조정합니다
+            except:
+                self.on_closing()
+
+    def on_closing(self):
+        self.running = False  # 애니메이션 루프 플래그 비활성화
 
     def __init__(self, parentFrame, parent, title, element):
         self.topParent = parent
@@ -162,6 +200,7 @@ class DetailWindow_perform:
         self.window.geometry("400x400")
 
         self.element = element
+        self.root = parentFrame
         self.setup_ui()
 
     def setup_ui(self):
@@ -228,8 +267,22 @@ class DetailWindow_perform:
         b.grid(row=1, column=0, padx=10, pady=10)
         b = Button(button_frame, text="파일", command=lambda: self.file(self.element), width=8, height=2)
         b.grid(row=2, column=0, padx=10, pady=10)
-        b = Button(button_frame, text="텔레그램", command=self.tele, width=8, height=2)
-        b.grid(row=3, column=0, padx=10, pady=10)
+        self.frames = []
+        for i in count():
+            try:
+                frame = PhotoImage(file="resources/bc.gif", format=f"gif -index {i}")
+                resized_frame = frame.subsample(8, 8)  # 크기를 조정합니다
+                self.frames.append(resized_frame)
+            except Exception:
+                break
+
+        self.frame_index = 0
+        self.my_button = Button(button_frame, text="",  image=self.frames[self.frame_index])
+        self.my_button.grid(row=3, column=0, padx=10, pady=10)
+
+        self.running = True  # 애니메이션 루프 플래그
+
+        self.update_animation()
 
     def email(self):
         recipient_email = simpledialog.askstring("이메일 전송", "수신자의 이메일 주소를 입력하세요:")
@@ -286,8 +339,6 @@ class DetailWindow_perform:
 
         messagebox.showinfo("저장", file_path + "에 저장됨!")
 
-    def tele(self): # todo
-        pass
 
     def bookmark(self, element):
         t = len(functions.bookmark_lists)
