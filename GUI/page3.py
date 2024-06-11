@@ -202,7 +202,5 @@ class Page3:
         button2.pack(pady=5)
         button3 = Button(button_frame, text="이메일", command=self.email)
         button3.pack(pady=5)
-        button4 = Button(button_frame, text="텔레그램")
-        button4.pack(pady=5)
 
         self.update_lb()

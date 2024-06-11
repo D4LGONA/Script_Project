@@ -26,7 +26,7 @@ class MainGui:
 
     def __init__(self):
         self.window = Tk()
-        self.window.title("스크립트언어")
+        self.window.title("밴붐온")
         self.window.geometry("600x600")
         self.x, self.y = functions.get_location()
 

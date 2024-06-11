@@ -10,7 +10,6 @@ import sqlite3
 import telepot
 from pprint import pprint
 from urllib.request import urlopen
-from bs4 import BeautifulSoup
 import re
 from datetime import date, datetime
 import traceback
@@ -29,7 +28,11 @@ def b_name(string):
     if string == '드세기둥' or string == '드럼세탁기와기타둥둥':
         text = "해님이가 기타치는 팀 이름!"
     elif string == 'Lacuna' or string == '라쿠나':
-        text = '''  98년생 동갑내기들로 구성된 대한민국의 인디밴드. 멤버는 장경민(보컬,기타), 김호(베이스), 오이삭(드럼), 정민혁(기타)이 있다.\n영화 이터널 선샤인에 나오는 기억을 지워주는 회사인 'Lacuna'에서 제목을 따 온 노래를 작곡했고, 이후 밴드명으로 정했다.\n2021년 2월 1일 MPMG WEEK를 통해 해피로봇 레코드 소속 아티스트가 되었다.'''
+        text = '''98년생 동갑내기들로 구성된 대한민국의 인디밴드. 멤버는 장경민(보컬, 기타), 김호(베이스), 오이삭(드럼), 정민혁(기타)이 있다.\n영화 이터널 선샤인에 나오는 기억을 지워주는 회사인 'Lacuna'에서 제목을 따 온 노래를 작곡했고, 이후 밴드명으로 정했다.\n2021년 2월 1일 MPMG WEEK를 통해 해피로봇 레코드 소속 아티스트가 되었다.'''
+    elif string == 'surl' or string == '설':
+        text = '록 음악, 블루스 기반의 4인조 밴드. 밴드명 SURL은 말씀 설(說)을 영문표기한 것으로, ‘이야기를 들려주는 밴드’라는 뜻.\n멤버는 오명석(드럼), 김도연(기타), 설호승(보컬, 기타), 이한빈(베이스)이 있다.'
+    elif string == '나상현씨밴드':
+        text = '대한민국의 3인조 인디 밴드.\n나상현(보컬, 작사, 작곡, 기타), 백승렬(베이스, 믹스&마스터, 아트워크), 강현웅(드럼)으로 구성 되어 있다.\n2014년 서울대학교 내 작곡동아리 사운드림에서 만난 나상현과 강현웅이 결성한 것을 시작으로, 2014년 서울대학교 문화자치위원회에서 기획한 옴니버스 앨범 「하라는 공부는 안하고 1집」에 수록된 \'늦은 새벽\'으로 데뷔하였다.'
     else:
         text = "그런거 몰라요."
     return text
